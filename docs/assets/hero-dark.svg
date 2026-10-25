@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600" role="img" aria-labelledby="hero-title hero-desc">
+  <title id="hero-title">package-delivery：把任务成果封成接收方可独立核对的交付包</title>
+  <desc id="hero-desc">深色封面。左侧是大字 package-delivery，下方两行中文“成果齐备 / 接手有据”，再下方为版本与运行要求。右侧是一只斜放的成果袋，袋口封着蓝色封签，露出 START-HERE.md、DELIVERY.json、MANIFEST.json、artifacts/、evidence/ 的清单纸；图中文件名为示意。</desc>
+  <rect width="1200" height="600" fill="#102235"/>
+  <text x="72" y="96" font-family="Consolas,'SFMono-Regular',monospace" font-size="22" letter-spacing="3" fill="#B7C6D8">AGENT SKILL · LOCAL · STDLIB</text>
+  <rect x="72" y="116" width="486" height="1" fill="#EAF2FA" opacity="0.2"/>
+  <text x="72" y="232" font-family="Consolas,'SFMono-Regular',monospace" font-size="94" font-weight="600" letter-spacing="-1" fill="#EAF2FA">package-</text>
+  <text x="72" y="330" font-family="Consolas,'SFMono-Regular',monospace" font-size="94" font-weight="600" letter-spacing="-1" fill="#EAF2FA">delivery</text>
+  <text x="72" y="414" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="58" font-weight="700" fill="#EAF2FA">成果齐备</text>
+  <text x="72" y="480" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="58" font-weight="700" fill="#EAF2FA">接手有据</text>
+  <rect x="72" y="518" width="430" height="1" fill="#EAF2FA" opacity="0.2"/>
+  <text x="72" y="556" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">v1.2.0 · Python 3.11+ · stdlib · MIT</text>
+  <rect x="612" y="116" width="1" height="404" fill="#EAF2FA" opacity="0.16"/>
+  <g transform="rotate(-4 966 346)">
+    <rect x="820" y="118" width="280" height="302" rx="2" fill="#EAF2FA" fill-opacity="0.12" stroke="#EAF2FA" stroke-opacity="0.3" stroke-width="1.5"/>
+    <text x="852" y="150" font-family="Consolas,'SFMono-Regular',monospace" font-size="26" font-weight="600" fill="#EAF2FA">result.zip</text>
+    <rect x="852" y="166" width="230" height="1" fill="#EAF2FA" opacity="0.24"/>
+    <rect x="836" y="174" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
+    <text x="852" y="188" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">START-HERE.md</text>
+    <rect x="836" y="210" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
+    <text x="852" y="224" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">DELIVERY.json</text>
+    <rect x="836" y="246" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
+    <text x="852" y="260" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">MANIFEST.json</text>
+    <rect x="836" y="282" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
+    <text x="852" y="296" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">artifacts/</text>
+    <rect x="836" y="318" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
+    <text x="852" y="332" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">evidence/</text>
+    <rect x="784" y="342" width="364" height="232" rx="4" fill="#344F69" stroke="#EAF2FA" stroke-opacity="0.4" stroke-width="2"/>
+    <rect x="784" y="342" width="364" height="24" fill="#EAF2FA" opacity="0.12"/>
+    <rect x="784" y="342" width="300" height="26" fill="#7CA7FF"/>
+    <rect x="1056" y="314" width="64" height="64" rx="3" fill="#7CA7FF" stroke="#102235" stroke-width="2.5"/>
+    <text x="1088" y="359" text-anchor="middle" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="38" font-weight="700" fill="#102235">封</text>
+    <rect x="816" y="432" width="216" height="82" rx="2" fill="#102235" stroke="#EAF2FA" stroke-opacity="0.35" stroke-width="1.5"/>
+    <text x="924" y="486" text-anchor="middle" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="34" font-weight="700" fill="#EAF2FA">成果袋</text>
+  </g>
+</svg>
