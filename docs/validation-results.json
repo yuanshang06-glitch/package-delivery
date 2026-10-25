@@ -1,0 +1,93 @@
+{
+  "version": "1.1.0",
+  "stage": "prepublication-candidate",
+  "local_checks_passed": true,
+  "base_helper_unchanged_sha256": "8dc23f1ca3d11e98d2d04a3506b4e040deae38ea5a34c6db5955cdf4af7d7569",
+  "suites": [
+    {
+      "suite": "base-delivery",
+      "python": "Python 3.11.9",
+      "os": "Windows",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "tests/test_delivery.py",
+        "--tool",
+        "package-delivery/scripts/delivery.py"
+      ],
+      "exit_code": 0,
+      "tests": 52,
+      "skipped": 2,
+      "output": "..............................ss....................\n----------------------------------------------------------------------\nRan 52 tests in 0.787s\n\nOK (skipped=2)"
+    },
+    {
+      "suite": "traceability-and-installer",
+      "python": "Python 3.11.9",
+      "os": "Windows",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "tests/test_release.py",
+        "--checker",
+        "package-delivery/scripts/check_handoff.py",
+        "--installer",
+        "scripts/install.py"
+      ],
+      "exit_code": 0,
+      "tests": 31,
+      "skipped": 0,
+      "output": "...............................\n----------------------------------------------------------------------\nRan 31 tests in 4.030s\n\nOK"
+    },
+    {
+      "suite": "base-delivery",
+      "python": "Python 3.12.14",
+      "os": "Windows",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "tests/test_delivery.py",
+        "--tool",
+        "package-delivery/scripts/delivery.py"
+      ],
+      "exit_code": 0,
+      "tests": 52,
+      "skipped": 2,
+      "output": "..............................ss....................\n----------------------------------------------------------------------\nRan 52 tests in 0.741s\n\nOK (skipped=2)"
+    },
+    {
+      "suite": "traceability-and-installer",
+      "python": "Python 3.12.14",
+      "os": "Windows",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "tests/test_release.py",
+        "--checker",
+        "package-delivery/scripts/check_handoff.py",
+        "--installer",
+        "scripts/install.py"
+      ],
+      "exit_code": 0,
+      "tests": 31,
+      "skipped": 0,
+      "output": "...............................\n----------------------------------------------------------------------\nRan 31 tests in 4.132s\n\nOK"
+    }
+  ],
+  "relative_markdown_links": "all targets exist",
+  "ordinary_symlink_limit": "Two base-suite file-symlink tests skipped due to Windows privilege; actual directory-junction tests ran.",
+  "not_run": [
+    "Public GitHub download and fixed-tag install (repository not yet published)",
+    "Remote GitHub Actions",
+    "Linux/macOS native execution",
+    "Native Codex/Claude discovery of this candidate",
+    "Longitudinal productivity comparison"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "python",
+    "artifacts/check_result.py"
+  ],
+  "cwd": ".",
+  "environment": {
+    "os": "Windows",
+    "python": "3.11.9"
+  },
+  "exit_code": 0,
+  "stdout": "Example content verified\n",
+  "stderr": "",
+  "execution": "current"
+}

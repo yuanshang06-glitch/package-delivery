@@ -1,0 +1,79 @@
+{
+  "schema_version": "collaborator-delivery/1",
+  "task_id": "example-v11",
+  "attempt_id": "example-v11-a1",
+  "title": "可接手文本示例",
+  "status": "completed",
+  "summary": "交付约定文本、检查入口及实际验证记录",
+  "independent_acceptance": "UNKNOWN",
+  "files": [
+    "START-HERE.md",
+    "artifacts/result.txt",
+    "artifacts/check_result.py",
+    "evidence/check.json"
+  ],
+  "checks": [
+    {
+      "name": "示例内容检查",
+      "status": "passed",
+      "evidence": "evidence/check.json"
+    }
+  ],
+  "unfinished": [],
+  "requirements": [
+    "Python 3.11+"
+  ],
+  "next_steps": [
+    "先读START-HERE.md，然后在解压根目录运行python artifacts/check_result.py"
+  ],
+  "traceability": {
+    "schema_version": "collaborator-traceability/1",
+    "criteria": [
+      {
+        "id": "AC1",
+        "requirement": "文本包含约定内容且接手命令能读取",
+        "status": "met",
+        "artifacts": [
+          "artifacts/result.txt",
+          "artifacts/check_result.py"
+        ],
+        "verification_ids": [
+          "V1"
+        ],
+        "reason": null
+      }
+    ],
+    "verifications": [
+      {
+        "id": "V1",
+        "kind": "unit",
+        "execution": "current",
+        "status": "passed",
+        "command": [
+          "python",
+          "artifacts/check_result.py"
+        ],
+        "cwd": ".",
+        "environment": {
+          "os": "Windows",
+          "python": "3.11.9"
+        },
+        "exit_code": 0,
+        "evidence": "evidence/check.json",
+        "subjects": [
+          {
+            "path": "artifacts/result.txt",
+            "sha256": "964ad027f45f4cac642a4381f6a1dda57305a5eaea33f3843dfbd938b4e962ba"
+          },
+          {
+            "path": "artifacts/check_result.py",
+            "sha256": "5751fe4ab1185df53058de2a915e475060dc3de312b0c7cebacc74fb3c2cc295"
+          }
+        ],
+        "reason": null,
+        "source": null
+      }
+    ],
+    "revision": null
+  }
+}

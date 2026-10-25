@@ -1,0 +1,45 @@
+{
+  "version": "1.1.0",
+  "files": [
+    {
+      "path": "package-delivery/agents/openai.yaml",
+      "bytes": 335,
+      "sha256": "902623aea8a3eae233c4a616c4c799f278dd6b0f42cef356504fcef73179b205"
+    },
+    {
+      "path": "package-delivery/references/delivery-format.md",
+      "bytes": 3612,
+      "sha256": "ba1af95f803ac806a90a837fcbd2a42294e3dc95c057d1c5b7453bdd2870d538"
+    },
+    {
+      "path": "package-delivery/references/task-brief.md",
+      "bytes": 1308,
+      "sha256": "2e63d33880e9c2787eba0927ef39328b1df9ffb391bf7f8a6043d78f51a74458"
+    },
+    {
+      "path": "package-delivery/references/traceability.md",
+      "bytes": 4200,
+      "sha256": "1c79521665afba4433ab0f48f1cd1ff377ab227fb4e7639c830d20c700739e99"
+    },
+    {
+      "path": "package-delivery/scripts/check_handoff.py",
+      "bytes": 30708,
+      "sha256": "587fb3be658c12993b91749b482477dcaf0df3e2693e735c5e6f052cd78e327b"
+    },
+    {
+      "path": "package-delivery/scripts/delivery.py",
+      "bytes": 38226,
+      "sha256": "8dc23f1ca3d11e98d2d04a3506b4e040deae38ea5a34c6db5955cdf4af7d7569"
+    },
+    {
+      "path": "package-delivery/SKILL.md",
+      "bytes": 4958,
+      "sha256": "c0bad0017ea79abe6493c38b1f6aa7a9be7344aa2a84e62d3c51d824b989e147"
+    },
+    {
+      "path": "package-delivery/VERSION",
+      "bytes": 6,
+      "sha256": "1575e1af4a95f12f70b4ee6a6adce8160953d93ea17dc2611b90883ccc3ad3b8"
+    }
+  ]
+}
