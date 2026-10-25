@@ -4,6 +4,21 @@
 
 `v1.2.0` · Python 3.11+ · 仅标准库 · MIT
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-dark.svg">
+  <img src="docs/assets/hero-light.svg" alt="package-delivery 封面：左侧大字 package-delivery 与“成果齐备 / 接手有据”，右侧是一只带蓝色封签的成果袋，袋口露出 START-HERE.md、DELIVERY.json、MANIFEST.json、artifacts/、evidence/ 清单纸；图中文件名为示意，完整目录树见正文。" width="100%">
+</picture>
+
+<table>
+  <tr>
+    <td align="center"><a href="#交回什么"><b>交回内容</b></a></td>
+    <td align="center"><a href="#1-安装"><b>安装</b></a></td>
+    <td align="center"><a href="#3-打包与接收"><b>打包核对</b></a></td>
+    <td align="center"><a href="#4-gb-级工程与资料"><b>大文件</b></a></td>
+    <td align="center"><a href="#验证状态"><b>验证记录</b></a></td>
+  </tr>
+</table>
+
 给合作者或 AI Agent 派任务后，交回实际产物、接手说明、验证证据、需求与产物对照表，以及明确列出的未完成项。
 
 本项目是一个本地 Agent Skill，附带两个检查脚本和一个安装器。没有后台服务，不需要 API Key 或额外 Python 依赖；任务本身用什么模型由你决定。它检查交付包的结构、摘要和引用是否一致，**不判断成果质量，也不证明作者身份或日志真实性**。详见[范围与限制](#范围与限制)。
@@ -18,6 +33,15 @@ result.zip
 ├── artifacts/        源文件、可编辑成果、必要资源
 └── evidence/         检查记录，区分本次执行、继承、未运行
 ```
+
+一张图说明打包方与接收方的分工：
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/workflow-dark.svg">
+  <img src="docs/assets/workflow-light.svg" alt="交付流程：上排打包方从左到右为约定任务、整理成果、打包；ZIP 用实线、包外摘要用虚线，两条通道分别交接。下排接收方从右到左为核对摘要、脚本检查、独立接手。" width="100%">
+</picture>
+
+*ZIP与包外摘要交付给接收方；脚本核对后仍需独立验收。*
 
 ## 快速上手
 
@@ -134,6 +158,17 @@ python scripts/install.py --client codex --replace
 - **证据边界**：容量上限、实际压力测试与长期可靠性分别报告；目前没有足够日常任务对照来量化生产力收益。
 
 ## 验证状态
+
+<p align="center">
+  <a href="docs/VALIDATION-v1.2.md">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="docs/assets/proof-dark.svg">
+      <img src="docs/assets/proof-light.svg" alt="校验凭条：已实测为绿色实心（CI 六组通过、8 GiB 单文件 stored 实写、同次测试峰值 working set 19.42 MiB）；未完整实测为空心（整包 16 GiB 上限、GB 级 deflated）；范围外为灰色横线（身份与日志真实性、生产力收益）。" width="420">
+    </picture>
+  </a>
+</p>
+
+本次观测环境为 Windows、Python 3.11.9、`stored` 压缩的合成文件，单机单次；凭条只概括下列记录。`19.42 MiB` 是本机 8 GiB 压力测试中打包子进程的峰值 working set（Windows `PeakWorkingSetSize`，不含系统文件缓存），CI 六组使用小 fixture。整包 16 GiB 与 GB 级 `deflated` 尚未完整压力实测，配置上限不等于实测通过；作者身份、日志真实性与成果质量不由脚本证明，生产力收益未量化。详见 [v1.2 验证](docs/VALIDATION-v1.2.md)。
 
 版本记录按实际执行保留，避免把配置或历史证据当成本次结果。
 

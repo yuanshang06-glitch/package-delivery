@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" width="960" height="600" role="img" aria-labelledby="flow-title flow-desc">
+  <title id="flow-title">交付流程：打包方三步与接收方三步，ZIP 与包外摘要分两条通道</title>
+  <desc id="flow-desc">上排打包方从左到右依次为约定任务、整理成果、打包；ZIP 用实线、包外摘要用蓝色虚线分别交接给接收方。下排接收方从右到左依次为核对摘要、脚本检查、独立接手。箭头方向为：上排向右，下排向左。</desc>
+  <rect x="32" y="40" width="896" height="210" rx="3" fill="#EAF2FA" fill-opacity="0.05" stroke="#EAF2FA" stroke-opacity="0.18" stroke-width="1.5"/>
+  <rect x="32" y="40" width="144" height="210" rx="3" fill="#EAF2FA" opacity="0.08"/>
+  <path d="M176 40 V250" stroke="#EAF2FA" stroke-opacity="0.2" stroke-width="1.5"/>
+  <text x="104" y="150" text-anchor="middle" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="40" font-weight="700" fill="#EAF2FA">打包方</text>
+  <text x="104" y="178" text-anchor="middle" font-family="Consolas,'SFMono-Regular',monospace" font-size="18" letter-spacing="2" fill="#B7C6D8">PACKER</text>
+  <rect x="32" y="350" width="896" height="210" rx="3" fill="#EAF2FA" fill-opacity="0.05" stroke="#EAF2FA" stroke-opacity="0.18" stroke-width="1.5"/>
+  <rect x="32" y="350" width="144" height="210" rx="3" fill="#EAF2FA" opacity="0.08"/>
+  <path d="M176 350 V560" stroke="#EAF2FA" stroke-opacity="0.2" stroke-width="1.5"/>
+  <text x="104" y="460" text-anchor="middle" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="40" font-weight="700" fill="#EAF2FA">接收方</text>
+  <text x="104" y="488" text-anchor="middle" font-family="Consolas,'SFMono-Regular',monospace" font-size="18" letter-spacing="2" fill="#B7C6D8">RECEIVER</text>
+  <g stroke="#EAF2FA" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M406 145 H444 M432 139 L444 145 L432 151"/>
+    <path d="M656 145 H694 M682 139 L694 145 L682 151"/>
+    <path d="M694 455 H656 M668 449 L656 455 L668 461"/>
+    <path d="M444 455 H406 M418 449 L406 455 L418 461"/>
+    <path d="M710 238 V356 M704 344 L710 356 L716 344"/>
+  </g>
+  <path d="M770 238 V356" fill="none" stroke="#7CA7FF" stroke-width="3" stroke-dasharray="8 7" stroke-linecap="round"/>
+  <path d="M764 344 L770 356 L776 344" fill="none" stroke="#7CA7FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="722" y="304" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">ZIP</text>
+  <text x="782" y="304" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="40" font-weight="700" fill="#7CA7FF">包外摘要</text>
+  <text x="200" y="304" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="40" font-weight="500" fill="#EAF2FA">两条通道由人工交接</text>
+  <g transform="translate(268,68)" stroke="#EAF2FA" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="13" y="5" width="38" height="54" rx="2"/>
+    <path d="M21 17 H43 M21 27 H43 M21 37 H35"/>
+    <rect x="21" y="45" width="9" height="9"/>
+    <path d="M23 49 l3 3 l5 -6" stroke="#7CA7FF"/>
+  </g>
+  <text x="300" y="170" text-anchor="middle" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="40" font-weight="700" fill="#EAF2FA">约定任务</text>
+  <text x="300" y="200" text-anchor="middle" font-family="Consolas,'SFMono-Regular',monospace" font-size="22" fill="#EAF2FA">task-brief.md</text>
+  <g transform="translate(518,68)" stroke="#EAF2FA" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 16 H24 L29 22 H56 V54 H8 Z"/>
+    <path d="M20 34 H36 M20 42 H36 M20 50 H30"/>
+  </g>
+  <text x="550" y="170" text-anchor="middle" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="40" font-weight="700" fill="#EAF2FA">整理成果</text>
+  <text x="550" y="200" text-anchor="middle" font-family="Consolas,'SFMono-Regular',monospace" font-size="22" fill="#EAF2FA">staging/</text>
+  <g transform="translate(768,68)" stroke="#EAF2FA" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="11" y="14" width="42" height="38" rx="2"/>
+    <path d="M11 24 H53"/>
+    <rect x="25" y="18" width="14" height="14" fill="#7CA7FF" stroke="none"/>
+  </g>
+  <text x="800" y="170" text-anchor="middle" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="40" font-weight="700" fill="#EAF2FA">打包</text>
+  <text x="800" y="200" text-anchor="middle" font-family="Consolas,'SFMono-Regular',monospace" font-size="22" fill="#EAF2FA">pack</text>
+  <text x="800" y="222" text-anchor="middle" font-family="Consolas,'SFMono-Regular',monospace" font-size="22" fill="#EAF2FA">→ result.zip</text>
+  <g transform="translate(768,378)" stroke="#EAF2FA" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="18" y="6" width="28" height="44" rx="1"/>
+    <path d="M24 16 H40 M24 24 H40 M24 32 H34"/>
+    <path d="M18 40 H46" stroke-dasharray="4 4"/>
+    <path d="M32 50 l4 4 l8 -10" stroke="#7CA7FF"/>
+  </g>
+  <text x="800" y="480" text-anchor="middle" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="40" font-weight="700" fill="#EAF2FA">核对摘要</text>
+  <text x="800" y="510" text-anchor="middle" font-family="Consolas,'SFMono-Regular',monospace" font-size="22" fill="#EAF2FA">outer digest</text>
+  <g transform="translate(518,378)" stroke="#EAF2FA" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="10" y="6" width="32" height="46" rx="2"/>
+    <path d="M17 17 H35 M17 25 H35 M17 33 H28"/>
+    <circle cx="44" cy="42" r="10"/>
+    <path d="M51 49 L58 56"/>
+  </g>
+  <text x="550" y="480" text-anchor="middle" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="40" font-weight="700" fill="#EAF2FA">脚本检查</text>
+  <text x="550" y="510" text-anchor="middle" font-family="Consolas,'SFMono-Regular',monospace" font-size="22" fill="#EAF2FA">verify</text>
+  <text x="550" y="532" text-anchor="middle" font-family="Consolas,'SFMono-Regular',monospace" font-size="22" fill="#EAF2FA">check_handoff</text>
+  <g transform="translate(268,378)" stroke="#EAF2FA" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 16 H24 L29 22 H56 V54 H8 Z"/>
+    <path d="M32 31 V47 M24 39 H40" stroke="#7CA7FF"/>
+  </g>
+  <text x="300" y="480" text-anchor="middle" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="40" font-weight="700" fill="#EAF2FA">独立接手</text>
+  <text x="300" y="510" text-anchor="middle" font-family="Consolas,'SFMono-Regular',monospace" font-size="22" fill="#EAF2FA">START-HERE</text>
+  <text x="300" y="532" text-anchor="middle" font-family="Consolas,'SFMono-Regular',monospace" font-size="22" fill="#EAF2FA">new workdir</text>
+</svg>
