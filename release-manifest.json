@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "files": [
     {
       "path": "package-delivery/agents/openai.yaml",
@@ -8,13 +8,18 @@
     },
     {
       "path": "package-delivery/references/delivery-format.md",
-      "bytes": 3612,
-      "sha256": "ba1af95f803ac806a90a837fcbd2a42294e3dc95c057d1c5b7453bdd2870d538"
+      "bytes": 3822,
+      "sha256": "cd8fd015e7b023009d18b2fca227ba15dc4f95ebe396fa2477268c9443e930bc"
+    },
+    {
+      "path": "package-delivery/references/large-files.md",
+      "bytes": 2792,
+      "sha256": "e3e47872eca8bcf45f51c7b3025b141210a1db4d81d712359b4c7e6e95611326"
     },
     {
       "path": "package-delivery/references/task-brief.md",
-      "bytes": 1308,
-      "sha256": "2e63d33880e9c2787eba0927ef39328b1df9ffb391bf7f8a6043d78f51a74458"
+      "bytes": 1453,
+      "sha256": "544837342f763f21065127fd23bf64d8fdb2d399c0ffca8194e0b9112410cce9"
     },
     {
       "path": "package-delivery/references/traceability.md",
@@ -23,23 +28,23 @@
     },
     {
       "path": "package-delivery/scripts/check_handoff.py",
-      "bytes": 30708,
-      "sha256": "587fb3be658c12993b91749b482477dcaf0df3e2693e735c5e6f052cd78e327b"
+      "bytes": 31821,
+      "sha256": "0115e237a6ffcae6a4e96b7db5eac6b9677c6ba95bd2c226c2465c2a2ff4e62a"
     },
     {
       "path": "package-delivery/scripts/delivery.py",
-      "bytes": 38226,
-      "sha256": "8dc23f1ca3d11e98d2d04a3506b4e040deae38ea5a34c6db5955cdf4af7d7569"
+      "bytes": 57511,
+      "sha256": "da451465d7685226e0ae57895e6334bdb90e44ceccf561683b6a3bb51f065cd6"
     },
     {
       "path": "package-delivery/SKILL.md",
-      "bytes": 4958,
-      "sha256": "c0bad0017ea79abe6493c38b1f6aa7a9be7344aa2a84e62d3c51d824b989e147"
+      "bytes": 5471,
+      "sha256": "9934c411e316cad20bfef661ae270ec6f97ea77a99f604db99c31cb04e609526"
     },
     {
       "path": "package-delivery/VERSION",
       "bytes": 6,
-      "sha256": "1575e1af4a95f12f70b4ee6a6adce8160953d93ea17dc2611b90883ccc3ad3b8"
+      "sha256": "1e5b51cde515396a9fa762909cf8ca6584ccc564b325d2eebeea76175fe95c4d"
     }
   ]
 }

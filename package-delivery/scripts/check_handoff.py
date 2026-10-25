@@ -10,12 +10,17 @@ directly from the ZIP (they are never extracted or executed) and check the
 
 Usage::
 
-    python check_handoff.py <archive>
+    python check_handoff.py <archive> [--profile standard|large]
 
 Public API::
 
-    check_handoff(archive) -> dict
+    check_handoff(archive, *, profile="standard") -> dict
     HandoffError.code      # fixed, machine-readable failure code
+
+``profile`` is forwarded unchanged to the trusted helper's
+``verify_delivery`` and ``open_bounded_archive``.  The checker never widens
+the receiver's selected caps on its own; a large delivery needs the same
+explicit profile here and in the structural verifier.
 
 The successful result is::
 
@@ -28,8 +33,9 @@ good, and never claims independent acceptance.
 
 Failure codes owned by this module (``HandoffError.code``)::
 
-    ARGS_INVALID, HELPER_MISSING, HELPER_INVALID, IO_ERROR, ARCHIVE_INVALID,
-    METADATA_INVALID, MANIFEST_INVALID, METADATA_LIMIT, MANIFEST_LIMIT,
+    ARGS_INVALID, INVALID_PROFILE, INVALID_COMPRESSION, HELPER_MISSING,
+    HELPER_INVALID, IO_ERROR, ARCHIVE_INVALID, METADATA_INVALID,
+    MANIFEST_INVALID, METADATA_LIMIT, MANIFEST_LIMIT,
     TRACEABILITY_MISSING, TRACEABILITY_INVALID, CRITERIA_INVALID,
     VERIFICATIONS_INVALID, CRITERION_ID_INVALID, CRITERION_STATUS_INVALID,
     CRITERION_REASON_INVALID, CRITERION_REASON_REQUIRED,
@@ -81,6 +87,8 @@ class HandoffError(Exception):
     """Fixed-code failure raised by the traceability checker."""
 
     ARGS_INVALID = "ARGS_INVALID"
+    INVALID_PROFILE = "INVALID_PROFILE"
+    INVALID_COMPRESSION = "INVALID_COMPRESSION"
     HELPER_MISSING = "HELPER_MISSING"
     HELPER_INVALID = "HELPER_INVALID"
     IO_ERROR = "IO_ERROR"
@@ -656,8 +664,13 @@ def _check_traceability(trace, meta, payload, manifest_hashes, delivery) -> dict
 # ---------------------------------------------------------------------------
 
 
-def check_handoff(archive):
-    """Verify ``archive`` structurally, then check its traceability extension."""
+def check_handoff(archive, *, profile="standard"):
+    """Verify ``archive`` structurally, then check its traceability extension.
+
+    ``profile`` selects the trusted helper's caps and is forwarded to both the
+    structural verifier and the bounded metadata reader; the checker itself
+    never upgrades or downgrades it.
+    """
     try:
         archive_path = os.fspath(archive)
     except TypeError:
@@ -667,15 +680,19 @@ def check_handoff(archive):
 
     delivery = _load_delivery_helper()
     try:
-        stats = delivery.verify_delivery(archive_path)
+        stats = delivery.verify_delivery(archive_path, profile=profile)
     except delivery.DeliveryError as exc:
         raise HandoffError(exc.code, "the trusted delivery verifier rejected the archive") from None
     except OSError:
         raise HandoffError(HandoffError.IO_ERROR, "could not read the archive") from None
 
-    limits = delivery.DEFAULT_LIMITS
     try:
-        with zipfile.ZipFile(archive_path, "r") as handle:
+        limits = delivery.get_limits(profile)
+    except delivery.DeliveryError as exc:
+        raise HandoffError(exc.code, "the trusted delivery helper rejected the profile") from None
+
+    try:
+        with delivery.open_bounded_archive(archive_path, profile=profile) as handle:
             delivery_bytes = _read_zip_entry(
                 handle,
                 "DELIVERY.json",
@@ -690,6 +707,8 @@ def check_handoff(archive):
             )
     except HandoffError:
         raise
+    except delivery.DeliveryError as exc:
+        raise HandoffError(exc.code, "the trusted delivery helper rejected the archive") from None
     except (zipfile.BadZipFile, OSError, RuntimeError, ValueError, NotImplementedError):
         raise HandoffError(HandoffError.ARCHIVE_INVALID, "archive is unreadable") from None
 
@@ -760,9 +779,10 @@ def main(argv=None) -> int:
         description="Check a collaborator-delivery/1 ZIP traceability extension.",
     )
     parser.add_argument("archive", help="delivery ZIP path")
+    parser.add_argument("--profile", default="standard", help="standard or large")
     try:
         args = parser.parse_args(argv)
-        result = check_handoff(args.archive)
+        result = check_handoff(args.archive, profile=args.profile)
     except HandoffError as exc:
         print(
             json.dumps({"error": exc.code}, separators=(",", ":")),

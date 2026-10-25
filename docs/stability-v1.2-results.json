@@ -1,0 +1,86 @@
+{
+  "version": "1.2.0",
+  "os": "Windows",
+  "python": "3.11.9",
+  "passed": true,
+  "checks": [
+    {
+      "name": "384MiB stored and deflated with independent reread",
+      "passed": true,
+      "seconds": 9.39,
+      "details": [
+        {
+          "compression": "stored",
+          "payload_bytes": 402653184,
+          "archive_bytes": 402654486,
+          "sha256": "c4fd614023e04acb53c51ba45dbb62193c67d98435dc7ef1cd1499b127af5f36"
+        },
+        {
+          "compression": "deflated",
+          "payload_bytes": 402653184,
+          "archive_bytes": 201849013,
+          "sha256": "7971aa172dadde30a3e2fe7934164c98cafbc81e5ba35b25e48ca29abd7f2a2e"
+        }
+      ]
+    },
+    {
+      "name": "partial output cleanup after simulated ENOSPC and KeyboardInterrupt",
+      "passed": true,
+      "seconds": 0.032,
+      "details": [
+        {
+          "fault": "disk-full",
+          "triggered_after_bytes": 1048614,
+          "partial_removed": true,
+          "sentinel_preserved": true
+        },
+        {
+          "fault": "interruption",
+          "triggered_after_bytes": 1048614,
+          "partial_removed": true,
+          "sentinel_preserved": true
+        }
+      ]
+    },
+    {
+      "name": "two CLI processes same output exclusive creation",
+      "passed": true,
+      "seconds": 3.406,
+      "details": {
+        "processes": 2,
+        "successes": 1,
+        "refused": 1,
+        "refusal": "IO_ERROR",
+        "winner_verified": true
+      }
+    },
+    {
+      "name": "384MiB stored payload bit flip refused",
+      "passed": true,
+      "seconds": 0.531,
+      "details": {
+        "refused": "ARCHIVE_INVALID",
+        "tamper": "one middle payload byte"
+      }
+    },
+    {
+      "name": "8GiB+1 sparse source fails early and leaves no ZIP",
+      "passed": true,
+      "seconds": 47.719,
+      "details": {
+        "refused": "FILE_LIMIT",
+        "logical_bytes": 8589934593,
+        "seconds": 0.547,
+        "sparse_fixture": true,
+        "partial_removed": true
+      }
+    }
+  ],
+  "fixture": "384MiB synthetic mixed compressibility; no user data",
+  "not_tested": [
+    "16GiB total boundary stress",
+    "power failure recovery",
+    "hostile concurrent modification"
+  ],
+  "generated_large_files_removed": true
+}

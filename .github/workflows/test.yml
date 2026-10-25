@@ -30,6 +30,13 @@ jobs:
       - name: Use canonical test temp directory
         # macOS /var is a symlink; preserve installer ancestor-link rejection.
         run: python -c "import os; from pathlib import Path; p=Path(os.environ['RUNNER_TEMP']).resolve(); f=open(os.environ['GITHUB_ENV'],'a',encoding='utf-8'); f.write('TMPDIR='+str(p)+'\n'); f.close()"
-      - run: python -B tests/test_delivery.py --tool package-delivery/scripts/delivery.py
-      - run: python -B tests/test_release.py --checker package-delivery/scripts/check_handoff.py --installer scripts/install.py
+      - name: Large-file checks and unchanged legacy suites
+        if: ${{ hashFiles('tests/test_large_delivery.py') != '' }}
+        run: python -B tests/test_large_delivery.py --tool package-delivery/scripts/delivery.py --checker package-delivery/scripts/check_handoff.py --base-tests tests/test_delivery.py --release-tests tests/test_release.py --installer scripts/install.py
+      - name: Legacy delivery checks
+        if: ${{ hashFiles('tests/test_large_delivery.py') == '' }}
+        run: python -B tests/test_delivery.py --tool package-delivery/scripts/delivery.py
+      - name: Legacy release checks
+        if: ${{ hashFiles('tests/test_large_delivery.py') == '' }}
+        run: python -B tests/test_release.py --checker package-delivery/scripts/check_handoff.py --installer scripts/install.py
       - run: python -B scripts/install.py --dry-run --dest "${{ runner.temp }}/skill-install/package-delivery"
