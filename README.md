@@ -1,6 +1,8 @@
 # package-delivery · 成果完整交付
 
-**v1.1.0 · Python 3.11+ · 标准库 · MIT**
+**v1.2.0 开发版 · Python 3.11+ · 标准库 · MIT**
+
+本分支正在开发GB级工程/资料交付；尚未发布v1.2.0。下方固定标签安装命令仍安装公开稳定版v1.1.0，大文件能力需使用本开发分支的完整源目录。
 
 给合作者或 AI Agent 派任务后，交回一个能直接接手的包：实际产物、接手说明、验证证据、验收要求对照表和未完成项。
 
@@ -94,6 +96,18 @@ python package-delivery/scripts/check_handoff.py result.zip
 
 格式与样例见 [交付格式](package-delivery/references/delivery-format.md)、[v1.1 可追溯扩展](package-delivery/references/traceability.md) 和 [最小示例](examples/README.md)。
 
+## GB级工程/资料包（v1.2开发版）
+
+```sh
+python package-delivery/scripts/delivery.py pack --root staging --out engineering.zip --profile large --compression stored
+python package-delivery/scripts/delivery.py verify engineering.zip --profile large
+python package-delivery/scripts/check_handoff.py engineering.zip --profile large
+```
+
+large模式上限为单文件8GiB、总解压16GiB，采用分块读写和ZIP64；不再把整个任务限制为128MiB。普通模式维持原限制，收件人也必须显式加large，不根据包内声明自动提高容量。
+
+详细环境、磁盘预算、压缩方式和局限见[大文件交付](package-delivery/references/large-files.md)。配置上限与已测尺寸分开记录；本分支的实际结果见[v1.2验证记录](docs/VALIDATION-v1.2.md)。
+
 ## 更新与回滚
 
 ```sh
@@ -108,7 +122,7 @@ python scripts/install.py --client codex --replace
 - 检查引用与摘要的一致性，不能判断需求文字是否准确、产物质量是否合格，不能证明日志真的由对应命令产生。
 - 包内摘要不认证作者身份；包外 SHA-256 也依赖可信来源。安装清单只校验收到的本地源，不提供签名或供应链身份认证。
 - 只拦截明显凭据文件名，不做内容级秘密扫描；交付前仍要核对文件范围。
-- 默认最多 512 个 ZIP 文件、单文件 64 MiB、总解压 128 MiB；暂不支持大模型权重、大视频或分卷交付。
+- 普通默认最多512文件、单文件64MiB、总解压128MiB；开发版显式large扩大为8GiB/16GiB。分卷、断点续传、自动网盘上传和更大整包仍未实现；实际已测尺寸另列，不能把配置上限视为全范围压力验证。
 - 原生客户端自动发现、跨系统实际运行与公网下载的已测/未测范围以验证记录为准。
 - 只支持可信本地操作者，不提供恶意执行者隔离，也不对安装期间断电或被其他程序修改文件提供事务保证。
 - 当前没有足够日常任务对照数据，不能宣称能提升多少生产力。
@@ -125,5 +139,19 @@ python scripts/install.py --client codex --replace
 python -B tests/test_delivery.py --tool package-delivery/scripts/delivery.py
 python -B tests/test_release.py --checker package-delivery/scripts/check_handoff.py --installer scripts/install.py
 ```
+
+大文件开发版的组合测试（同时运行原52/31项兼容套件，fixture保持小体积）：
+
+```sh
+python -B tests/test_large_delivery.py --tool package-delivery/scripts/delivery.py --checker package-delivery/scripts/check_handoff.py --base-tests tests/test_delivery.py --release-tests tests/test_release.py --installer scripts/install.py
+```
+
+超过4GiB的合成压力测试需显式选择新目录和容量，预计需要至少两倍fixture大小的可用磁盘；不会在普通CI中自动生成GB文件：
+
+```sh
+python -B tests/benchmark_large.py --work-dir ../large-file-fixture --size-mib 4097 --report ../large-file-result.json
+```
+
+压力脚本只删除自己生成的data.bin与result.zip，留下JSON报告；Windows还记录各子进程峰值working set。小阈值ZIP64测试与实际4GiB读写分别报告。
 
 测试使用自造临时目录，不安装到真实用户目录。GitHub Actions 会在发布上传后执行，其运行结果不会被本地报告提前宣称通过。

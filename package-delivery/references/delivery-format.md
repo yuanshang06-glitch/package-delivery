@@ -1,6 +1,6 @@
 # 交付格式 v1
 
-skill v1.1.0仍使用本基础格式。新交付应同时添加[可追溯扩展](traceability.md)，由check_handoff.py独立核对；基础pack/verify保持旧包兼容。
+skill v1.1及v1.2仍使用本基础格式。新交付应同时添加[可追溯扩展](traceability.md)，由check_handoff.py独立核对；GB级任务另见[大文件交付](large-files.md)，普通默认保持旧包兼容。
 
 填写DELIVERY.json时读本文件。UTF-8 JSON；files为包内相对路径白名单，统一正斜杠，可含中文文件名。
 
@@ -39,7 +39,7 @@ skill v1.1.0仍使用本基础格式。新交付应同时添加[可追溯扩展]
 
 只读白名单，未列出的staging文件不入ZIP。明显凭据路径如.git/、.ssh/、.env和私钥文件不能交付；无秘密的.env.example/.env.sample/.env.template可以作为配置模板。文件名拦截不能替代内容审查。
 
-固定上限：512个ZIP文件条目；每文件64MiB；全部解压内容128MiB；DELIVERY.json 64KiB、MANIFEST.json 512KiB。超限失败，不能静默漏文件。
+普通默认上限：512个ZIP文件条目；每文件64MiB；全部解压内容128MiB。显式large模式扩大为每文件8GiB、总16GiB；512条目、DELIVERY.json 64KiB、MANIFEST.json 512KiB和ZIP目录4MiB不扩大。超限失败，不能静默漏文件。profile由本地调用者选择，不从包内自动采用。
 
 ## 输出与接收
 

@@ -8,24 +8,56 @@ tree.
 
 Usage::
 
-    python delivery.py pack --root <staging-dir> --out <new.zip>
-    python delivery.py verify <zip>
+    python delivery.py pack --root <staging-dir> --out <new.zip> \
+        [--profile standard|large] [--compression deflated|stored]
+    python delivery.py verify <zip> [--profile standard|large]
 
 Public API::
 
-    pack_delivery(root, out, *, limits=None) -> dict
-    verify_delivery(archive, *, limits=None) -> dict
+    pack_delivery(root, out, *, limits=None, profile="standard",
+                  compression="deflated") -> dict
+    verify_delivery(archive, *, limits=None, profile="standard") -> dict
+    check_handoff(archive, *, profile="standard")  # in check_handoff.py
+    get_limits(profile="standard", limits=None) -> dict
+    open_bounded_archive(path, *, limits=None, profile="standard")
     DeliveryError.code  # fixed, machine-readable failure code
 
-Both successful calls return the same stats dict::
+Both successful pack/verify calls return the same stats dict::
 
     {"archive_sha256": "<hex>", "files": <zip entry count>,
      "total_bytes": <uncompressed bytes of every entry>}
 
-``limits`` may be a mapping that only *tightens* the fixed defaults, which is
-useful for small fixture tests.  It must contain integer (not bool) values in
-``0 <= value <= DEFAULT_LIMITS[key]``; unknown keys are rejected.  The CLI
-always uses the fixed defaults.
+``profile`` is exactly ``"standard"`` or ``"large"``.  ``standard`` keeps the
+historical caps; ``large`` uses ``LARGE_LIMITS`` (8 GiB per file and 16 GiB
+total) but keeps the same entry, metadata, manifest, and central-directory
+caps.  There is deliberately no automatic profile inference: a receiver must
+pass ``profile="large"`` explicitly to accept a large package.
+
+``compression`` is exactly ``"deflated"`` or ``"stored"`` for packing.  Stored
+avoids recompressing already-compressed engineering resources; deflated is the
+backward-compatible default.
+
+``limits`` may be a mapping that only *tightens* the caps of the selected
+profile, which is useful for small fixture tests.  It must contain integer (not
+bool) values in ``0 <= value <= selected_profile[key]``; unknown keys are
+rejected.  Raising a cap, including raising a standard cap toward a large cap,
+is rejected rather than silently switching profiles.
+
+``open_bounded_archive`` is the shared bounded reader used by
+``verify_delivery`` and the traceability checker.  Before constructing
+``zipfile.ZipFile`` it parses the EOCD (or ZIP64 EOCD/locator), caps the
+central-directory bytes at 4 MiB and the entry count at the selected profile,
+then reads the fixed-size central-directory records.  It never calls CPython
+private ZIP helpers and never lets metadata claim an unbounded allocation.
+Malformed, multi-disk, or inconsistent records fail ``ARCHIVE_INVALID``; an
+entry count above the selected profile fails ``ENTRY_LIMIT``; and a central
+directory above the fixed 4 MiB cap fails ``ARCHIVE_TOO_LARGE``.  An archive
+comment that embeds another EOCD signature is ambiguous (the public
+``zipfile`` reader selects the last one), so it is rejected rather than
+letting the preflight and ``ZipFile`` disagree about which directory to read.  The raw-file
+cap is ``max_total_bytes + ceil(max_total_bytes/1000) + 8 MiB`` so an
+essentially incompressible stored package is not rejected by its own encoding
+overhead.
 
 Trust model: this is an ordinary local tool for a trusted operator.  It does
 not isolate hostile code, does not execute package content, does not scan file
@@ -35,9 +67,10 @@ not a substitute for content review.
 
 Failure codes (``DeliveryError.code``)::
 
-    INVALID_LIMITS, ROOT_INVALID, METADATA_MISSING, METADATA_INVALID,
-    METADATA_LIMIT, METADATA_ACCEPTANCE_CLAIM, FILES_INVALID, PATH_INVALID,
-    PATH_SECRET, PATH_UNSAFE, FILE_MISSING, FILE_NOT_REGULAR, FILE_LIMIT,
+    INVALID_LIMITS, INVALID_PROFILE, INVALID_COMPRESSION, ROOT_INVALID,
+    METADATA_MISSING, METADATA_INVALID, METADATA_LIMIT,
+    METADATA_ACCEPTANCE_CLAIM, FILES_INVALID, PATH_INVALID, PATH_SECRET,
+    PATH_UNSAFE, FILE_MISSING, FILE_NOT_REGULAR, FILE_LIMIT, ENTRY_LIMIT,
     TOTAL_LIMIT, MANIFEST_INVALID, MANIFEST_LIMIT, OUTPUT_INVALID,
     OUTPUT_EXISTS, OUTPUT_PARENT_MISSING, ARCHIVE_NOT_FOUND, ARCHIVE_INVALID,
     ARCHIVE_TOO_LARGE, ARCHIVE_ENCRYPTED, ENTRY_NOT_FILE, ENTRY_SYMLINK,
@@ -50,6 +83,7 @@ Error messages never include file names, metadata text, or file contents.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
 import json
 import os
@@ -64,8 +98,11 @@ from types import MappingProxyType
 
 __all__ = [
     "DEFAULT_LIMITS",
+    "LARGE_LIMITS",
     "DeliveryError",
+    "get_limits",
     "main",
+    "open_bounded_archive",
     "pack_delivery",
     "verify_delivery",
 ]
@@ -78,15 +115,51 @@ _FIXED_LIMITS = {
     "max_manifest_bytes": 512 * 1024,
 }
 
-#: Immutable fixed caps.  ``limits=`` may only tighten these values.
+#: Immutable fixed caps for the historical standard profile.  ``limits=`` may
+#: only tighten these values.
 DEFAULT_LIMITS = MappingProxyType(_FIXED_LIMITS)
+
+#: Immutable caps for the explicit large-file profile.  Entry, metadata,
+#: manifest, and central-directory caps deliberately stay at the standard
+#: values; only per-file and total payload bytes grow.
+LARGE_LIMITS = MappingProxyType(
+    {
+        "max_entries": 512,
+        "max_file_bytes": 8 * 1024 * 1024 * 1024,
+        "max_total_bytes": 16 * 1024 * 1024 * 1024,
+        "max_metadata_bytes": 64 * 1024,
+        "max_manifest_bytes": 512 * 1024,
+    }
+)
+
+_PROFILE_LIMITS = {"standard": DEFAULT_LIMITS, "large": LARGE_LIMITS}
+_COMPRESSION_TYPES = {
+    "deflated": zipfile.ZIP_DEFLATED,
+    "stored": zipfile.ZIP_STORED,
+}
 
 _DELIVERY_SCHEMA = "collaborator-delivery/1"
 _MANIFEST_SCHEMA = "delivery-manifest/1"
 
 _CHUNK = 64 * 1024
 _MAX_PATH = 4096
-_ARCHIVE_OVERHEAD = 1024 * 1024
+_MAX_CENTRAL_DIRECTORY = 4 * 1024 * 1024
+_ZIP64_EXTRA_HEADROOM = 8 * 1024 * 1024
+
+_EOCD_SIG = b"PK\x05\x06"
+_ZIP64_EOCD_SIG = b"PK\x06\x06"
+_ZIP64_LOCATOR_SIG = b"PK\x06\x07"
+_CENTRAL_SIG = b"PK\x01\x02"
+_EOCD_STRUCT = struct.Struct("<4s4H2LH")
+_ZIP64_LOCATOR_STRUCT = struct.Struct("<4sLQL")
+_ZIP64_EOCD_STRUCT = struct.Struct("<4sQ2H2L4Q")
+_CENTRAL_HEADER_SIZE = 46
+_EOCD_MIN_SIZE = 22
+_EOCD_MAX_COMMENT = 0xFFFF
+_ZIP64_LOCATOR_SIZE = 20
+_ZIP64_EOCD_SIZE = 56
+_UINT16_SENTINEL = 0xFFFF
+_UINT32_SENTINEL = 0xFFFFFFFF
 
 _ID_RE = re.compile(r"[a-z0-9][a-z0-9-]{0,127}")
 _SHA_RE = re.compile(r"[0-9a-f]{64}")
@@ -155,6 +228,8 @@ class DeliveryError(Exception):
 
     #: Limit overrides were not a valid tightening mapping.
     INVALID_LIMITS = "INVALID_LIMITS"
+    INVALID_PROFILE = "INVALID_PROFILE"
+    INVALID_COMPRESSION = "INVALID_COMPRESSION"
     ROOT_INVALID = "ROOT_INVALID"
     METADATA_MISSING = "METADATA_MISSING"
     METADATA_INVALID = "METADATA_INVALID"
@@ -196,24 +271,45 @@ class DeliveryError(Exception):
 # ---------------------------------------------------------------------------
 
 
-def _resolve_limits(limits):
-    """Return a full limits dict, accepting only tighter integer overrides."""
+def get_limits(profile="standard", limits=None):
+    """Return a full limits dict for ``profile``, applying only tighter caps.
+
+    ``profile`` must be exactly ``"standard"`` or ``"large"`` -- there is no
+    inference from archive metadata.  ``limits`` may only lower the selected
+    profile's caps; raising a standard cap cannot turn it into the large
+    profile.
+    """
+    if not isinstance(profile, str) or profile not in _PROFILE_LIMITS:
+        raise DeliveryError(DeliveryError.INVALID_PROFILE, "unknown delivery profile")
+    base = _PROFILE_LIMITS[profile]
     if limits is None:
-        return dict(_FIXED_LIMITS)
+        return dict(base)
     if not isinstance(limits, Mapping):
         raise DeliveryError(DeliveryError.INVALID_LIMITS, "limits must be a mapping")
-    resolved = dict(_FIXED_LIMITS)
+    resolved = dict(base)
     for key, value in limits.items():
-        if key not in _FIXED_LIMITS:
+        if key not in base:
             raise DeliveryError(DeliveryError.INVALID_LIMITS, "unknown limit key")
         if type(value) is not int or value < 0:
             raise DeliveryError(DeliveryError.INVALID_LIMITS, "limit must be a non-negative int")
-        if value > _FIXED_LIMITS[key]:
+        if value > base[key]:
             raise DeliveryError(
-                DeliveryError.INVALID_LIMITS, "limits may only tighten the fixed defaults"
+                DeliveryError.INVALID_LIMITS,
+                "limits may only tighten the selected profile",
             )
         resolved[key] = value
     return resolved
+
+
+def _resolve_limits(limits, profile="standard"):
+    """Backward-compatible internal wrapper around :func:`get_limits`."""
+    return get_limits(profile, limits)
+
+
+def _resolve_compression(compression):
+    if not isinstance(compression, str) or compression not in _COMPRESSION_TYPES:
+        raise DeliveryError(DeliveryError.INVALID_COMPRESSION, "unknown compression mode")
+    return _COMPRESSION_TYPES[compression]
 
 
 # ---------------------------------------------------------------------------
@@ -549,22 +645,40 @@ def _read_metadata_file(root: str, limit: int) -> bytes:
     return data
 
 
-def _zip_info(name: str) -> zipfile.ZipInfo:
+def _zip_info(name: str, compression: int = zipfile.ZIP_DEFLATED) -> zipfile.ZipInfo:
     info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
-    info.compress_type = zipfile.ZIP_DEFLATED
+    info.compress_type = compression
     info.create_system = 3
     info.external_attr = 0o100644 << 16
     return info
 
 
-def _write_zip_bytes(handle: zipfile.ZipFile, name: str, data: bytes) -> None:
-    with handle.open(_zip_info(name), "w") as target:
+def _write_zip_bytes(
+    handle: zipfile.ZipFile,
+    name: str,
+    data: bytes,
+    compression: int = zipfile.ZIP_DEFLATED,
+    force_zip64: bool = False,
+) -> None:
+    info = _zip_info(name, compression)
+    # The size is already known and small; this keeps the header decision
+    # explicit instead of relying on a stream-sized guess.
+    info.file_size = len(data)
+    with handle.open(info, "w", force_zip64=force_zip64) as target:
         target.write(data)
 
 
-def _copy_source_to_zip(handle, name, source, limits, running_total):
-    """Stream one source file into the ZIP, hashing exactly the written bytes."""
-    info = _zip_info(name)
+def _copy_source_to_zip(
+    handle, name, source, limits, running_total, compression, force_zip64=False
+):
+    """Stream one source file into the ZIP, hashing exactly the written bytes.
+
+    The trusted ``fstat`` size is used only for an early limit decision and to
+    make the local-header ZIP64 decision; the read loop still counts the actual
+    bytes and enforces both caps, so a file that grows or shrinks during the
+    copy cannot bypass the limits.
+    """
+    info = _zip_info(name, compression)
     digest = hashlib.sha256()
     written = 0
     try:
@@ -577,7 +691,12 @@ def _copy_source_to_zip(handle, name, source, limits, running_total):
             raise DeliveryError(
                 DeliveryError.FILE_NOT_REGULAR, "declared entry is not a regular file"
             )
-        with handle.open(info, "w") as target:
+        if st.st_size > limits["max_file_bytes"]:
+            raise DeliveryError(DeliveryError.FILE_LIMIT, "file exceeds limit")
+        if running_total + st.st_size > limits["max_total_bytes"]:
+            raise DeliveryError(DeliveryError.TOTAL_LIMIT, "delivery exceeds limit")
+        info.file_size = st.st_size
+        with handle.open(info, "w", force_zip64=force_zip64) as target:
             while True:
                 chunk = source_handle.read(_CHUNK)
                 if not chunk:
@@ -636,7 +755,7 @@ def _discard_new_output(out: str, identity) -> None:
 # ---------------------------------------------------------------------------
 
 
-def pack_delivery(root, out, *, limits=None):
+def pack_delivery(root, out, *, limits=None, profile="standard", compression="deflated"):
     """Create ``out`` (must not exist) from the whitelist in ``root``.
 
     ``root`` is not modified.  Only ``DELIVERY.json`` plus the files it lists are
@@ -644,8 +763,14 @@ def pack_delivery(root, out, *, limits=None):
     the staging directory.  On failure any archive created by this call is
     removed; pre-existing outputs are never touched.  The result is re-verified
     with :func:`verify_delivery` before returning.
+
+    ``profile="large"`` enables ZIP64 writing and the large byte caps; the
+    standard profile never writes ZIP64.  ``compression="stored"`` avoids
+    recompressing already-compressed resources.
     """
-    resolved = _resolve_limits(limits)
+    resolved = get_limits(profile, limits)
+    compression_type = _resolve_compression(compression)
+    large = profile == "large"
     root_path = _validate_root(_coerce_path(root, DeliveryError.ROOT_INVALID))
     out = _coerce_path(out, DeliveryError.OUTPUT_INVALID)
     _validate_output_target(out)
@@ -676,7 +801,7 @@ def pack_delivery(root, out, *, limits=None):
         descriptor = None
         with handle:
             archive = zipfile.ZipFile(
-                handle, "w", compression=zipfile.ZIP_DEFLATED, allowZip64=False
+                handle, "w", compression=compression_type, allowZip64=large
             )
             try:
                 entries = [
@@ -691,7 +816,13 @@ def pack_delivery(root, out, *, limits=None):
                     segments = _validate_rel_path(relative)
                     source = _ensure_regular_file(root_path, segments)
                     written, digest = _copy_source_to_zip(
-                        archive, relative, source, resolved, running_total
+                        archive,
+                        relative,
+                        source,
+                        resolved,
+                        running_total,
+                        compression_type,
+                        force_zip64=large,
                     )
                     running_total += written
                     entries.append(
@@ -709,11 +840,34 @@ def pack_delivery(root, out, *, limits=None):
                 if total > resolved["max_total_bytes"]:
                     raise DeliveryError(DeliveryError.TOTAL_LIMIT, "delivery exceeds limit")
 
-                _write_zip_bytes(archive, "MANIFEST.json", manifest_bytes)
-                _write_zip_bytes(archive, "DELIVERY.json", delivery_bytes)
+                _write_zip_bytes(
+                    archive,
+                    "MANIFEST.json",
+                    manifest_bytes,
+                    compression_type,
+                    force_zip64=large,
+                )
+                _write_zip_bytes(
+                    archive,
+                    "DELIVERY.json",
+                    delivery_bytes,
+                    compression_type,
+                    force_zip64=large,
+                )
+            except zipfile.LargeZipFile:
+                raise DeliveryError(
+                    DeliveryError.FILE_LIMIT,
+                    "ZIP64 is required but not enabled for this profile",
+                ) from None
             finally:
-                archive.close()
-        return verify_delivery(out, limits=limits)
+                try:
+                    archive.close()
+                except zipfile.LargeZipFile:
+                    raise DeliveryError(
+                        DeliveryError.FILE_LIMIT,
+                        "ZIP64 is required but not enabled for this profile",
+                    ) from None
+        return verify_delivery(out, limits=limits, profile=profile)
     except BaseException:
         if descriptor is not None:
             try:
@@ -742,24 +896,280 @@ _ZIP_READ_ERRORS = (
 )
 
 
-def _archive_raw_size(archive: str, limits) -> tuple:
-    if not isinstance(archive, str):
-        raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "archive must be a path string")
+def _archive_raw_cap(limits) -> int:
+    """Conservative raw-file cap for encoded ZIP bytes.
+
+    Deflate's worst-case expansion is well under 0.1% of the payload, and the
+    fixed 8 MiB headroom covers local/central headers, ZIP64 records, names,
+    comments, and small metadata.  Using ``total + total/1000 + 8 MiB`` avoids
+    rejecting a legal, essentially incompressible large package while still
+    bounding the file we are willing to open and hash.
+    """
+    total = limits["max_total_bytes"]
+    return total + (total + 999) // 1000 + _ZIP64_EXTRA_HEADROOM
+
+
+def _read_exact_at(handle, offset: int, size: int) -> bytes:
+    handle.seek(offset)
+    data = handle.read(size)
+    if len(data) != size:
+        raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "truncated ZIP record")
+    return data
+
+
+def _find_eocd(handle, file_size: int):
+    """Boundedly locate and parse the classic EOCD record.
+
+    The scan reads at most 22 + 65535 trailing bytes, exactly the ZIP limit for
+    an archive comment.  The accepted record must be the same one the public
+    :class:`zipfile.ZipFile` reader would use, otherwise the preflight could
+    validate one central directory while ``ZipFile`` followed another.
+
+    Two selection rules mirror the standard library exactly:
+
+    * No-comment fast path: when the final 22 bytes are an EOCD record whose
+      comment length is zero, that record is used directly.  ``zipfile`` checks
+      this fixed block before searching, so a normal archive whose own numeric
+      field happens to encode an EOCD signature is not falsely rejected.
+    * Commented path: ``zipfile`` searches the whole trailing window and trusts
+      the *last* EOCD signature it finds.  A record is accepted only when it is
+      that last signature in the entire window and its declared comment length
+      lands exactly at EOF.  A signature hidden in an earlier record's numeric
+      fields (for example the central-directory offset) or in the comment makes
+      the selection ambiguous and is rejected outright; ordinary comments
+      without an EOCD signature remain fully supported.
+    """
+    if file_size < _EOCD_MIN_SIZE:
+        raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "file is too short for a ZIP")
+    tail_length = min(file_size, _EOCD_MIN_SIZE + _EOCD_MAX_COMMENT)
+    tail_start = file_size - tail_length
+    handle.seek(tail_start)
+    tail = handle.read(tail_length)
+    if len(tail) != tail_length:
+        raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "could not read ZIP tail")
+
+    final = len(tail) - _EOCD_MIN_SIZE
+    if tail[final : final + 4] == _EOCD_SIG:
+        fields = _EOCD_STRUCT.unpack_from(tail, final)
+        if fields[7] == 0:
+            return tail_start + final, fields
+
+    # Commented archive: accept only the last signature in the whole window,
+    # which is the one ``zipfile`` would unpack.
+    index = tail.rfind(_EOCD_SIG)
+    if index < 0:
+        raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "ZIP end record is missing")
+    if index + _EOCD_MIN_SIZE > len(tail):
+        raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "ZIP end record is truncated")
+    fields = _EOCD_STRUCT.unpack_from(tail, index)
+    if index + _EOCD_MIN_SIZE + fields[7] != len(tail):
+        raise DeliveryError(
+            DeliveryError.ARCHIVE_INVALID,
+            "ambiguous ZIP end record in the trailing window",
+        )
+    return tail_start + index, fields
+
+
+def _preflight_central_directory(handle, file_size: int, limits) -> None:
+    """Parse EOCD/ZIP64 records and the central directory before ZipFile.
+
+    This is intentionally a small public-structure parser: it never calls
+    ``zipfile._EndRecData``, never trusts a declared size before capping it at
+    4 MiB, and counts the fixed 46-byte central-directory records itself.
+    """
+    eocd_pos, eocd = _find_eocd(handle, file_size)
+    (
+        _signature,
+        disk_number,
+        cd_disk,
+        entries_disk,
+        entries_total,
+        cd_size,
+        cd_offset,
+        _comment_len,
+    ) = eocd
+
+    if disk_number != 0 or cd_disk != 0 or entries_disk != entries_total:
+        raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "multi-disk ZIP is not supported")
+
+    locator = b""
+    if eocd_pos >= _ZIP64_LOCATOR_SIZE:
+        locator = _read_exact_at(handle, eocd_pos - _ZIP64_LOCATOR_SIZE, _ZIP64_LOCATOR_SIZE)
+    has_locator = locator[:4] == _ZIP64_LOCATOR_SIG
+    needs_zip64 = (
+        entries_disk == _UINT16_SENTINEL
+        or entries_total == _UINT16_SENTINEL
+        or cd_size == _UINT32_SENTINEL
+        or cd_offset == _UINT32_SENTINEL
+    )
+    zip64_pos = eocd_pos - _ZIP64_LOCATOR_SIZE - _ZIP64_EOCD_SIZE
+    if has_locator and zip64_pos >= 0:
+        # A stray locator signature inside ordinary bytes just before the EOCD
+        # must not hijack a non-ZIP64 archive.  Only a real fixed ZIP64 record
+        # immediately before the locator makes the extension authoritative.
+        if _read_exact_at(handle, zip64_pos, 4) != _ZIP64_EOCD_SIG:
+            if needs_zip64:
+                raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "bad ZIP64 end record")
+            has_locator = False
+    elif has_locator:
+        raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "ZIP64 end record is missing")
+    if needs_zip64 and not has_locator:
+        raise DeliveryError(
+            DeliveryError.ARCHIVE_INVALID, "ZIP64 sentinel without a ZIP64 locator"
+        )
+
+    if has_locator:
+        (
+            _locator_signature,
+            locator_disk,
+            locator_offset,
+            locator_disks,
+        ) = _ZIP64_LOCATOR_STRUCT.unpack(locator)
+        if locator_disk != 0 or locator_disks > 1:
+            raise DeliveryError(
+                DeliveryError.ARCHIVE_INVALID, "multi-disk ZIP is not supported"
+            )
+        record = _read_exact_at(handle, zip64_pos, _ZIP64_EOCD_SIZE)
+        (
+            zip64_signature,
+            zip64_size,
+            _version_made,
+            _version_needed,
+            zip64_disk,
+            zip64_cd_disk,
+            zip64_entries_disk,
+            zip64_entries_total,
+            zip64_cd_size,
+            zip64_cd_offset,
+        ) = _ZIP64_EOCD_STRUCT.unpack(record)
+        if zip64_signature != _ZIP64_EOCD_SIG:
+            raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "bad ZIP64 end record")
+        # CPython's reader only understands the fixed 56-byte record without
+        # extensible data; reject explicitly instead of letting ZipFile guess.
+        if zip64_size != 44:
+            raise DeliveryError(
+                DeliveryError.ARCHIVE_INVALID, "ZIP64 extensible data is not supported"
+            )
+        if zip64_disk != 0 or zip64_cd_disk != 0:
+            raise DeliveryError(
+                DeliveryError.ARCHIVE_INVALID, "multi-disk ZIP is not supported"
+            )
+        if zip64_entries_disk != zip64_entries_total:
+            raise DeliveryError(
+                DeliveryError.ARCHIVE_INVALID, "inconsistent ZIP64 entry counts"
+            )
+        if locator_offset > zip64_pos:
+            raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "bad ZIP64 locator offset")
+        if entries_total != _UINT16_SENTINEL and entries_total != zip64_entries_total:
+            raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "inconsistent entry counts")
+        if cd_size != _UINT32_SENTINEL and cd_size != zip64_cd_size:
+            raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "inconsistent ZIP64 size")
+        if cd_offset != _UINT32_SENTINEL and cd_offset != zip64_cd_offset:
+            raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "inconsistent ZIP64 offset")
+        entries_total = zip64_entries_total
+        cd_size = zip64_cd_size
+        cd_offset = zip64_cd_offset
+        region_end = zip64_pos
+    else:
+        region_end = eocd_pos
+
+    if entries_total > limits["max_entries"]:
+        raise DeliveryError(DeliveryError.ENTRY_LIMIT, "too many archive entries")
+    if cd_size > _MAX_CENTRAL_DIRECTORY:
+        raise DeliveryError(
+            DeliveryError.ARCHIVE_TOO_LARGE, "central directory exceeds the fixed cap"
+        )
+    if cd_size < _CENTRAL_HEADER_SIZE * entries_total:
+        raise DeliveryError(
+            DeliveryError.ARCHIVE_INVALID, "central directory is too small for its entries"
+        )
+    if cd_offset + cd_size > region_end:
+        raise DeliveryError(
+            DeliveryError.ARCHIVE_INVALID, "central directory lies outside the archive"
+        )
+    cd_start = region_end - cd_size
+    if cd_start < 0:
+        raise DeliveryError(
+            DeliveryError.ARCHIVE_INVALID, "central directory lies outside the archive"
+        )
+
+    data = _read_exact_at(handle, cd_start, cd_size)
+    offset = 0
+    count = 0
+    while offset < cd_size:
+        if cd_size - offset < _CENTRAL_HEADER_SIZE:
+            raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "truncated central directory")
+        if data[offset : offset + 4] != _CENTRAL_SIG:
+            raise DeliveryError(
+                DeliveryError.ARCHIVE_INVALID, "bad central directory record signature"
+            )
+        name_length = int.from_bytes(data[offset + 28 : offset + 30], "little")
+        extra_length = int.from_bytes(data[offset + 30 : offset + 32], "little")
+        comment_length = int.from_bytes(data[offset + 32 : offset + 34], "little")
+        record_length = (
+            _CENTRAL_HEADER_SIZE + name_length + extra_length + comment_length
+        )
+        if record_length > cd_size - offset:
+            raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "truncated central directory")
+        offset += record_length
+        count += 1
+        if count > limits["max_entries"]:
+            raise DeliveryError(DeliveryError.ENTRY_LIMIT, "too many archive entries")
+    if count != entries_total:
+        raise DeliveryError(
+            DeliveryError.ARCHIVE_INVALID, "central directory entry count is inconsistent"
+        )
+
+
+@contextlib.contextmanager
+def open_bounded_archive(path, *, limits=None, profile="standard"):
+    """Open a delivery ZIP after bounded central-directory preflight.
+
+    The preflight and the returned ``zipfile.ZipFile`` share one underlying
+    handle, so a caller cannot be handed a second uncontrolled read.  The
+    yielded object is a normal read-only ``ZipFile``.
+    """
+    resolved = get_limits(profile, limits)
+    archive = _coerce_path(path, DeliveryError.ARCHIVE_INVALID)
+    cap = _archive_raw_cap(resolved)
     try:
         st = os.stat(archive)
     except OSError:
         raise DeliveryError(DeliveryError.ARCHIVE_NOT_FOUND, "archive is not accessible") from None
     if not stat.S_ISREG(st.st_mode):
         raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "archive is not a regular file")
-    cap = (
-        limits["max_total_bytes"]
-        + limits["max_manifest_bytes"]
-        + limits["max_metadata_bytes"]
-        + _ARCHIVE_OVERHEAD
-    )
     if st.st_size > cap:
         raise DeliveryError(DeliveryError.ARCHIVE_TOO_LARGE, "archive is too large")
-    return st.st_size, cap
+    try:
+        raw_handle = open(archive, "rb")
+    except OSError:
+        raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "archive is not readable") from None
+
+    archive_zip = None
+    try:
+        try:
+            opened_stat = os.fstat(raw_handle.fileno())
+            if not stat.S_ISREG(opened_stat.st_mode):
+                raise DeliveryError(
+                    DeliveryError.ARCHIVE_INVALID, "archive is not a regular file"
+                )
+            if opened_stat.st_size > cap:
+                raise DeliveryError(DeliveryError.ARCHIVE_TOO_LARGE, "archive is too large")
+            _preflight_central_directory(raw_handle, opened_stat.st_size, resolved)
+            raw_handle.seek(0)
+            archive_zip = zipfile.ZipFile(raw_handle, "r")
+        except DeliveryError:
+            raise
+        except _ZIP_READ_ERRORS:
+            raise DeliveryError(
+                DeliveryError.ARCHIVE_INVALID, "archive is not a readable ZIP"
+            ) from None
+        try:
+            yield archive_zip
+        finally:
+            archive_zip.close()
+    finally:
+        raw_handle.close()
 
 
 def _check_entry_safety(info: zipfile.ZipInfo) -> None:
@@ -817,19 +1227,20 @@ def _scan_entry(handle, info, caps, state, limits, collect=False):
     return size, digest.hexdigest(), data
 
 
-def _sha256_file(path: str, cap: int) -> str:
+def _sha256_open_handle(handle, cap: int) -> str:
+    """Hash the already-open archive handle in fixed chunks under ``cap``."""
     digest = hashlib.sha256()
     size = 0
     try:
-        with open(path, "rb") as handle:
-            while True:
-                chunk = handle.read(_CHUNK)
-                if not chunk:
-                    break
-                size += len(chunk)
-                if size > cap:
-                    raise DeliveryError(DeliveryError.ARCHIVE_TOO_LARGE, "archive is too large")
-                digest.update(chunk)
+        handle.seek(0)
+        while True:
+            chunk = handle.read(_CHUNK)
+            if not chunk:
+                break
+            size += len(chunk)
+            if size > cap:
+                raise DeliveryError(DeliveryError.ARCHIVE_TOO_LARGE, "archive is too large")
+            digest.update(chunk)
     except DeliveryError:
         raise
     except OSError:
@@ -837,26 +1248,25 @@ def _sha256_file(path: str, cap: int) -> str:
     return digest.hexdigest()
 
 
-def verify_delivery(archive, *, limits=None):
+def verify_delivery(archive, *, limits=None, profile="standard"):
     """Structurally verify a delivery ZIP without extracting or executing it.
 
     Checks the exact entry set, path rules, link/special/encrypted entries,
     DELIVERY.json rules, MANIFEST.json schema, per-entry size and SHA-256, all
     fixed limits, and ZIP/CRC integrity.  Returns the same stats dict as
     :func:`pack_delivery`.
+
+    ``profile`` selects the caps; the standard profile deliberately rejects a
+    package that exceeds its smaller byte limits unless the receiver explicitly
+    asks for ``profile="large"``.
     """
-    resolved = _resolve_limits(limits)
+    resolved = get_limits(profile, limits)
     archive = _coerce_path(archive, DeliveryError.ARCHIVE_INVALID)
-    _, raw_cap = _archive_raw_size(archive, resolved)
+    raw_cap = _archive_raw_cap(resolved)
 
-    try:
-        handle = zipfile.ZipFile(archive, "r")
-    except _ZIP_READ_ERRORS:
-        raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "archive is not a readable ZIP") from None
-
-    with handle:
+    with open_bounded_archive(archive, limits=resolved, profile=profile) as archive_zip:
         try:
-            infos = handle.infolist()
+            infos = archive_zip.infolist()
             if len(infos) > resolved["max_entries"]:
                 raise DeliveryError(DeliveryError.ENTRY_LIMIT, "too many archive entries")
 
@@ -871,6 +1281,17 @@ def verify_delivery(archive, *, limits=None):
                 seen_exact.add(name)
                 seen_keys.add(key)
 
+            # A ZIP64 header may declare a huge member.  Reject from the
+            # directory metadata before opening/decompressing the payload;
+            # the real read loop below still enforces the same caps.
+            declared_total = 0
+            for info in infos:
+                if info.file_size > resolved["max_file_bytes"]:
+                    raise DeliveryError(DeliveryError.FILE_LIMIT, "entry exceeds file limit")
+                declared_total += info.file_size
+                if declared_total > resolved["max_total_bytes"]:
+                    raise DeliveryError(DeliveryError.TOTAL_LIMIT, "delivery exceeds limit")
+
             by_name = {info.filename: info for info in infos}
             if "DELIVERY.json" not in by_name or "MANIFEST.json" not in by_name:
                 raise DeliveryError(
@@ -880,7 +1301,7 @@ def verify_delivery(archive, *, limits=None):
             state = {"total": 0}
             delivery_info = by_name["DELIVERY.json"]
             _, _, delivery_bytes = _scan_entry(
-                handle,
+                archive_zip,
                 delivery_info,
                 [
                     (resolved["max_metadata_bytes"], DeliveryError.METADATA_LIMIT),
@@ -896,7 +1317,7 @@ def verify_delivery(archive, *, limits=None):
 
             manifest_info = by_name["MANIFEST.json"]
             _, _, manifest_bytes = _scan_entry(
-                handle,
+                archive_zip,
                 manifest_info,
                 [
                     (resolved["max_manifest_bytes"], DeliveryError.MANIFEST_LIMIT),
@@ -932,7 +1353,7 @@ def verify_delivery(archive, *, limits=None):
                 expected = manifest_entries[relative]
                 info = by_name[relative]
                 size, digest, _ = _scan_entry(
-                    handle,
+                    archive_zip,
                     info,
                     [(resolved["max_file_bytes"], DeliveryError.FILE_LIMIT)],
                     state,
@@ -946,16 +1367,17 @@ def verify_delivery(archive, *, limits=None):
                     raise DeliveryError(
                         DeliveryError.ARCHIVE_HASH_MISMATCH, "file digest mismatch"
                     )
+
+            archive_digest = _sha256_open_handle(archive_zip.fp, raw_cap)
+            return {
+                "archive_sha256": archive_digest,
+                "files": len(infos),
+                "total_bytes": state["total"],
+            }
         except DeliveryError:
             raise
         except _ZIP_READ_ERRORS:
             raise DeliveryError(DeliveryError.ARCHIVE_INVALID, "archive is corrupt") from None
-
-    return {
-        "archive_sha256": _sha256_file(archive, raw_cap),
-        "files": len(infos),
-        "total_bytes": state["total"],
-    }
 
 
 # ---------------------------------------------------------------------------
@@ -973,16 +1395,26 @@ def main(argv=None) -> int:
     pack_parser = subparsers.add_parser("pack", help="build a new delivery ZIP")
     pack_parser.add_argument("--root", required=True, help="staging directory")
     pack_parser.add_argument("--out", required=True, help="new ZIP path (must not exist)")
+    pack_parser.add_argument("--profile", default="standard", help="standard or large")
+    pack_parser.add_argument(
+        "--compression", default="deflated", help="deflated or stored"
+    )
 
     verify_parser = subparsers.add_parser("verify", help="verify an existing delivery ZIP")
     verify_parser.add_argument("archive", help="ZIP path")
+    verify_parser.add_argument("--profile", default="standard", help="standard or large")
 
     args = parser.parse_args(argv)
     try:
         if args.command == "pack":
-            stats = pack_delivery(args.root, args.out)
+            stats = pack_delivery(
+                args.root,
+                args.out,
+                profile=args.profile,
+                compression=args.compression,
+            )
         else:
-            stats = verify_delivery(args.archive)
+            stats = verify_delivery(args.archive, profile=args.profile)
     except DeliveryError as exc:
         print(json.dumps({"error": exc.code}, separators=(",", ":")), file=sys.stderr)
         return 1
