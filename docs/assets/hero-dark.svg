@@ -12,25 +12,25 @@
   <text x="72" y="556" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">v1.2.0 · Python 3.11+ · stdlib · MIT</text>
   <rect x="612" y="116" width="1" height="404" fill="#EAF2FA" opacity="0.16"/>
   <g transform="rotate(-4 966 346)">
-    <rect x="820" y="118" width="280" height="312" rx="2" fill="#EAF2FA" fill-opacity="0.12" stroke="#EAF2FA" stroke-opacity="0.3" stroke-width="1.5"/>
-    <text x="852" y="160" font-family="Consolas,'SFMono-Regular',monospace" font-size="26" font-weight="600" fill="#EAF2FA">result.zip</text>
-    <rect x="852" y="176" width="230" height="1" fill="#EAF2FA" opacity="0.24"/>
-    <rect x="836" y="200" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
-    <text x="852" y="214" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">START-HERE.md</text>
-    <rect x="836" y="240" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
-    <text x="852" y="254" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">DELIVERY.json</text>
-    <rect x="836" y="280" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
-    <text x="852" y="294" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">MANIFEST.json</text>
-    <rect x="836" y="320" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
-    <text x="852" y="334" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">artifacts/</text>
-    <rect x="836" y="360" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
-    <text x="852" y="374" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">evidence/</text>
-    <rect x="784" y="384" width="364" height="190" rx="4" fill="#344F69" stroke="#EAF2FA" stroke-opacity="0.4" stroke-width="2"/>
-    <rect x="784" y="384" width="364" height="24" fill="#EAF2FA" opacity="0.12"/>
-    <rect x="784" y="384" width="300" height="26" fill="#7CA7FF"/>
-    <rect x="1056" y="356" width="64" height="64" rx="3" fill="#7CA7FF" stroke="#102235" stroke-width="2.5"/>
-    <text x="1088" y="401" text-anchor="middle" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="38" font-weight="700" fill="#102235">封</text>
-    <rect x="816" y="430" width="216" height="82" rx="2" fill="#102235" stroke="#EAF2FA" stroke-opacity="0.35" stroke-width="1.5"/>
-    <text x="924" y="482" text-anchor="middle" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="34" font-weight="700" fill="#EAF2FA">成果袋</text>
+    <rect x="820" y="118" width="280" height="302" rx="2" fill="#EAF2FA" fill-opacity="0.12" stroke="#EAF2FA" stroke-opacity="0.3" stroke-width="1.5"/>
+    <text x="852" y="150" font-family="Consolas,'SFMono-Regular',monospace" font-size="26" font-weight="600" fill="#EAF2FA">result.zip</text>
+    <rect x="852" y="166" width="230" height="1" fill="#EAF2FA" opacity="0.24"/>
+    <rect x="836" y="174" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
+    <text x="852" y="188" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">START-HERE.md</text>
+    <rect x="836" y="210" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
+    <text x="852" y="224" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">DELIVERY.json</text>
+    <rect x="836" y="246" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
+    <text x="852" y="260" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">MANIFEST.json</text>
+    <rect x="836" y="282" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
+    <text x="852" y="296" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">artifacts/</text>
+    <rect x="836" y="318" width="8" height="8" fill="#EAF2FA" opacity="0.4"/>
+    <text x="852" y="332" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">evidence/</text>
+    <rect x="784" y="342" width="364" height="232" rx="4" fill="#344F69" stroke="#EAF2FA" stroke-opacity="0.4" stroke-width="2"/>
+    <rect x="784" y="342" width="364" height="24" fill="#EAF2FA" opacity="0.12"/>
+    <rect x="784" y="342" width="300" height="26" fill="#7CA7FF"/>
+    <rect x="1056" y="314" width="64" height="64" rx="3" fill="#7CA7FF" stroke="#102235" stroke-width="2.5"/>
+    <text x="1088" y="359" text-anchor="middle" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="38" font-weight="700" fill="#102235">封</text>
+    <rect x="816" y="432" width="216" height="82" rx="2" fill="#102235" stroke="#EAF2FA" stroke-opacity="0.35" stroke-width="1.5"/>
+    <text x="924" y="486" text-anchor="middle" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="34" font-weight="700" fill="#EAF2FA">成果袋</text>
   </g>
 </svg>

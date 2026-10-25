@@ -38,7 +38,7 @@ result.zip
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/workflow-dark.svg">
-  <img src="docs/assets/workflow-light.svg" alt="交付流程：上排打包方从左到右为约定任务、整理成果、打包；ZIP 用实线、包外摘要用虚线，两条通道分别交接。下排接收方从右到左为核对摘要、脚本检查、独立接手。" width="100%">
+  <img src="docs/assets/workflow-light.svg" alt="交付流程：上排打包方从左到右为约定任务、整理成果、打包；ZIP 用实线、包外摘要用虚线，两条通道由人工交接。下排接收方从右到左为核对摘要、脚本检查、独立接手。" width="100%">
 </picture>
 
 *ZIP与包外摘要交付给接收方；脚本核对后仍需独立验收。*
@@ -168,7 +168,7 @@ python scripts/install.py --client codex --replace
   </a>
 </p>
 
-本次观测环境为 Windows、Python 3.11.9、`stored` 压缩的合成文件，单机单次；凭条只概括下列记录。`19.42 MiB` 是本机 8 GiB 压力测试中打包子进程的峰值 working set（Windows `PeakWorkingSetSize`，不含系统文件缓存），CI 六组使用小 fixture。整包 16 GiB 与 GB 级 `deflated` 尚未完整压力实测，配置上限不等于实测通过；作者身份、日志真实性与成果质量不由脚本证明，生产力收益未量化。详见 [v1.2 验证](docs/VALIDATION-v1.2.md)。
+凭条只概括下列记录。本机 8 GiB 观测环境为 Windows、Python 3.11.9、`stored` 压缩的合成文件，单机单次；`19.42 MiB` 是该次测试中打包子进程的峰值 working set（Windows `PeakWorkingSetSize`，不含系统文件缓存），CI 六组则使用 3 OS × Python 3.11 / 3.12 的小 fixture。整包 16 GiB 与 GB 级 `deflated` 尚未完整压力实测，配置上限不等于实测通过；作者身份、日志真实性与成果质量不由脚本证明，生产力收益未量化。详见 [v1.2 验证](docs/VALIDATION-v1.2.md)。
 
 版本记录按实际执行保留，避免把配置或历史证据当成本次结果。
 
