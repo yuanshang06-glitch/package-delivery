@@ -1,6 +1,6 @@
-# v1.1.0 本地验证记录
+# v1.1.0 发布前本地验证记录
 
-日期：2026-10-25。阶段：发布前候选，不等同于公开发布或生产环境验收。
+日期：2026-10-25。以下保留发布前的本地验证快照，不等同于公开下载或生产环境验收；发布后结果另行记录。
 
 ## 实际检查
 
@@ -31,7 +31,7 @@ python -B tests/test_release.py --checker package-delivery/scripts/check_handoff
 
 ## 尚未验证
 
-公开仓库和固定标签下载（待所有者预览后发布）、远端GitHub Actions、Linux/macOS实际运行、Codex/Claude对本候选的原生自动发现、长期生产力收益。CI文件已配置三系统/两Python矩阵，但配置存在不代表已运行通过。
+在这份发布前快照中：公开仓库和固定标签下载、远端GitHub Actions、Linux/macOS实际运行、Codex/Claude原生自动发现、长期生产力收益尚未验证。后续远端运行以[GitHub Actions](https://github.com/yuanshang06-glitch/package-delivery/actions)及发布后验证记录为准，不将配置存在当作运行通过。
 
 ## 信任边界
 

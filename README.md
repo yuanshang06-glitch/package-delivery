@@ -6,17 +6,17 @@
 
 这个项目是一个可移植 Agent Skill，加两个独立检查脚本和本地安装器。没有后台服务，不需要 API Key、付费模型或额外 Python 依赖；任务本身使用什么模型由你决定。
 
-> 发布状态：本目录为 v1.1.0 待审发布候选。GitHub 仓库、标签及 Release 尚未创建。下面带 GitHub 地址的安装步骤仅在正式发布后可用；本地安装可先预览。
+版本与附件见 [v1.1.0 Release](https://github.com/yuanshang06-glitch/package-delivery/releases/tag/v1.1.0)。环境、已测范围和目前短板见下文及[验证记录](docs/VALIDATION.md)；最新远端检查见 [GitHub Actions](https://github.com/yuanshang06-glitch/package-delivery/actions)。
 
 ## 快捷安装
 
-### 发布后：npx 一条命令
+### npx 一条命令
 
 ```sh
 npx skills@1.7.4 add https://github.com/yuanshang06-glitch/package-delivery/tree/v1.1.0/package-delivery --skill package-delivery -a codex -g --copy
 ```
 
-这是第三方 [Vercel skills CLI](https://github.com/vercel-labs/skills) 的可选安装路径，需要Node.js≥22.20、npm/npx、Git与网络。命令固定CLI和skill版本，选择Codex的全局范围并复制文件。现有安装的覆盖与更新遵循该CLI行为；需要保留旧目录时，使用下面自带安装器的`--replace`流程。该CLI不属于本项目代码或运行时依赖。发布前公网URL尚不可用。
+这是第三方 [Vercel skills CLI](https://github.com/vercel-labs/skills) 的可选安装路径，需要Node.js≥22.20、npm/npx、Git与网络。命令固定CLI和skill版本，选择Codex的全局范围并复制文件。现有安装的覆盖与更新遵循该CLI行为；需要保留旧目录时，使用下面自带安装器的`--replace`流程。该CLI不属于本项目代码或运行时依赖。
 
 ### 已解压本仓库：无需 Git 或网络
 
@@ -31,7 +31,7 @@ python scripts/install.py --client codex
 
 Claude Code 的目录安装可用 `--client claude`；该目标为 `~/.claude/skills/package-delivery`，本次只验证目录安装，尚未验证 Claude 的实际加载行为。其他工具可直接读取 `package-delivery/SKILL.md`，不承诺原生发现。
 
-### 发布后的两步安装（Git + Python）
+### 两步安装（Git + Python）
 
 ```sh
 git clone --depth 1 --branch v1.1.0 https://github.com/yuanshang06-glitch/package-delivery.git package-delivery-v1.1.0
@@ -40,7 +40,7 @@ python package-delivery-v1.1.0/scripts/install.py --client codex
 
 使用固定版本标签，不下载执行漂移的 main 脚本。安装前可先查看 `scripts/install.py`，或在最后一条命令加 `--dry-run` 预览写入位置。
 
-在有 `$skill-installer` 的 Codex 中，发布后也可发送：
+在有 `$skill-installer` 的 Codex 中，也可发送：
 
 ```text
 使用 $skill-installer 从 https://github.com/yuanshang06-glitch/package-delivery/tree/v1.1.0/package-delivery 安装 package-delivery。
