@@ -1,5 +1,13 @@
 name: test
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: 'Optional existing tag or commit to test with the current CI harness'
+        required: false
+        default: ''
 permissions:
   contents: read
 jobs:
@@ -10,8 +18,16 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python: ['3.11', '3.12']
     runs-on: ${{ matrix.os }}
+    env:
+      # macOS /var is a symlink; use the runner's canonical temp directory.
+      # This keeps real install ancestor-link checks enabled in every test.
+      TMPDIR: ${{ runner.temp }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref || github.sha }}
+      - name: Record tested revision
+        run: git rev-parse HEAD
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
