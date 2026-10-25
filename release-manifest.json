@@ -13,8 +13,8 @@
     },
     {
       "path": "package-delivery/references/large-files.md",
-      "bytes": 2802,
-      "sha256": "2517dbed93e4e3e3e5c76b33f7a716c969e55e2078f310baee8f33a9ece3894c"
+      "bytes": 2792,
+      "sha256": "e3e47872eca8bcf45f51c7b3025b141210a1db4d81d712359b4c7e6e95611326"
     },
     {
       "path": "package-delivery/references/task-brief.md",
@@ -38,8 +38,8 @@
     },
     {
       "path": "package-delivery/SKILL.md",
-      "bytes": 5486,
-      "sha256": "5a2b627491c63b69ba4b92fb490d1a57a7052c2b377bd8259cb09ba67da09c0e"
+      "bytes": 5471,
+      "sha256": "9934c411e316cad20bfef661ae270ec6f97ea77a99f604db99c31cb04e609526"
     },
     {
       "path": "package-delivery/VERSION",

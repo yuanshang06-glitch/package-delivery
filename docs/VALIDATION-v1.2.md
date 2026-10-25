@@ -1,6 +1,6 @@
-# v1.2.0 大文件开发版验证
+# v1.2.0 大文件验证
 
-本版是开发分支，尚未创建v1.2.0正式Release。目标场景是几百MB到几GB的工程/资料包；配置上限为large单文件8GiB、总解压16GiB，standard默认保持64MiB/128MiB。
+本版面向几百MB到几GB的工程/资料包；配置上限为large单文件8GiB、总解压16GiB，standard默认保持64MiB/128MiB。本记录区分开发验收和2026-10-25发布前稳定性复查。
 
 ## 验证口径
 
@@ -34,8 +34,16 @@ skill格式检查通过；1.2.0清单包含9个skill文件，隔离目录dry-run
 
 ## 远端CI
 
-Ubuntu/Windows/macOS × Python3.11/3.12六组检查全部成功，包含大文件组合回归及安装预览。已测源码commit为9a659c7bad99aa4136a752cf0774c0f082bb220e；见[实际Actions运行](https://github.com/yuanshang06-glitch/package-delivery/actions/runs/40181208327)及[机器快照](ci-v1.2-source.json)。远端CI使用小fixture，没有在六个runner上重跑GB压力。后续仅文档记录提交不改变该源码验证结论。开发候选保留在[草稿PR #1](https://github.com/yuanshang06-glitch/package-delivery/pull/1)，尚未合并或发布。
+Ubuntu/Windows/macOS × Python3.11/3.12六组检查全部成功，包含大文件组合回归及安装预览。已测源码commit为9a659c7bad99aa4136a752cf0774c0f082bb220e；见[实际Actions运行](https://github.com/yuanshang06-glitch/package-delivery/actions/runs/40181208327)及[机器快照](ci-v1.2-source.json)。远端CI使用小fixture，没有在六个runner上重跑GB压力。发布准备源自[PR #1](https://github.com/yuanshang06-glitch/package-delivery/pull/1)；最终提交的CI和固定标签下载/安装在发布后记录中单独绑定，不能用旧运行冒充。
+
+## 发布前稳定性复查：通过
+
+2026-10-25，Windows/Python3.11.9，额外实际写入8GiB单文件（8,589,934,592字节），stored ZIP为8,589,937,325字节。ZIP64、源文件/成员/清单摘要、large完整性与可追溯检查全部通过，standard正确拒绝。打包含内部校验70.047秒，子进程峰值20,361,216字节（约19.42MiB）；显式校验52.390秒、接手检查35.141秒。见[原始报告](large-file-stress-8g-v1.2.json)。这些单次时间可能受同期本机磁盘负载影响，不用于性能比较。
+
+独立复查另覆盖五组情境，见[机器记录](stability-v1.2-results.json)：384MiB混合内容的stored/deflated打包和重新读取；写入超过1MiB后模拟ENOSPC与KeyboardInterrupt，均清理本次半包并保留无关文件；两个CLI竞争同一路径，恰好一个成功且其结果可验证；384MiB包的payload中段单字节篡改被拒绝；8GiB+1字节的源文件在写入payload前拒绝。最后一个是逻辑长度fixture，与实写8GiB测试分别报告。生成的大文件均已清理。
+
+本轮没有改动已接受的产品脚本或安装器；修改范围为发布文档、真实检查记录和skill中的开发版标识。Claude实际提供排版建议，采用首屏价值/目录树、单一主安装路径、其他路径折叠和验证/限制分层；技术验收由Codex独立执行。
 
 ## 仍有边界
 
-单文件8GiB/总16GiB是配置上限，没有逐一完成这些上限的压力实测。实际GB压力只覆盖Windows/Python3.11的stored路径；deflated和其他系统由小fixture回归覆盖。原生IDE发现、真实用户工程接手尚未验证。文件条目仍最多512，小元数据上限保留。校验需要完整读取内容，磁盘/CPU耗时随大小增长；不做分卷、断点续传、自动外部上传下载或恶意并发隔离。结构校验、作者身份、日志真实性和产物质量仍是不同结论。公开v1.1.0标签及附件未修改。
+单文件8GiB已实际压力验证，16GiB总量配置上限尚未完整压力实测。GB压力只覆盖Windows/Python3.11的stored路径；deflated额外覆盖到384MiB，其他系统仍由小fixture回归覆盖。原生IDE发现、真实用户工程接手尚未验证。文件条目仍最多512，小元数据上限保留。校验需要完整读取内容，磁盘/CPU耗时随大小增长；不做分卷、断点续传、自动外部上传下载或恶意并发隔离。结构校验、作者身份、日志真实性和产物质量仍是不同结论。公开v1.1.0标签及附件未修改。

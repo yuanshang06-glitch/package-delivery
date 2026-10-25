@@ -1,0 +1,52 @@
+{
+  "version": "1.2.0-development",
+  "fixture": "synthetic repeated byte pattern, not a user engineering project",
+  "os": "Windows",
+  "python": "3.11.9",
+  "logical_payload_bytes": 8589934592,
+  "profile": "large",
+  "compression": "stored",
+  "memory_metric": "PeakWorkingSetSize of each Windows child process; excludes system file cache; null on other systems",
+  "phases": [
+    {
+      "name": "standard-pack-refuses-large-member",
+      "exit_code": 1,
+      "seconds": 0.203,
+      "peak_working_set_bytes": 19845120
+    },
+    {
+      "name": "large-stored-pack-and-internal-verification",
+      "exit_code": 0,
+      "seconds": 70.047,
+      "peak_working_set_bytes": 20361216
+    },
+    {
+      "name": "large-explicit-verification",
+      "exit_code": 0,
+      "seconds": 52.39,
+      "peak_working_set_bytes": 20013056
+    },
+    {
+      "name": "large-traceability",
+      "exit_code": 0,
+      "seconds": 35.141,
+      "peak_working_set_bytes": 19795968
+    },
+    {
+      "name": "standard-verify-refuses-large-archive",
+      "exit_code": 1,
+      "seconds": 0.141,
+      "peak_working_set_bytes": 20238336
+    }
+  ],
+  "passed": true,
+  "fixture_creation_seconds": 9.844,
+  "member_extract_version": 45,
+  "archive_bytes": 8589937325,
+  "archive_sha256": "563d73441dba1d9bf99034e6eb82f1eb2a9ae7d8644e598d1c5cd75b68c434a6",
+  "source_sha256": "73ce5d97029dbd1784eba6e3027ff0a1f080a3872a057b07decee9234107fb47",
+  "zip64_eocd_present": true,
+  "zip64_locator_present": true,
+  "uncompressed_total_bytes": 8589936571,
+  "large_generated_files_removed": true
+}

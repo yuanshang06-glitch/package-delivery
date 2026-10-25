@@ -5,7 +5,7 @@ description: "把已执行任务的实际成果整理成可直接接手的交付
 
 # 成果完整交付
 
-版本：1.2.0（开发版）。数据格式沿用collaborator-delivery/1及collaborator-traceability/1；需要GB级工程/资料交付时读[大文件交付](references/large-files.md)。
+版本：1.2.0。数据格式沿用collaborator-delivery/1及collaborator-traceability/1；需要GB级工程/资料交付时读[大文件交付](references/large-files.md)。
 
 让收件人只拿到这个包，就知道交付了什么、如何使用、哪些验证做过、还缺什么及下一步由谁处理。打包只覆盖已授权任务，不附带上传、发消息、部署或修改其他项目的权限。
 
