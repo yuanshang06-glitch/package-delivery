@@ -140,6 +140,7 @@ python scripts/install.py --client codex --replace
 | 记录 | 内容 |
 | --- | --- |
 | [v1.2 验证](docs/VALIDATION-v1.2.md) | 两 Python 兼容性、真实大文件、失败处理与六组 CI |
+| [v1.2 发布后复验](docs/POST-RELEASE-v1.2.md) | 公开附件、固定标签 CI、Git / npx 安装与升级备份 |
 | [GitHub Actions](https://github.com/yuanshang06-glitch/package-delivery/actions) | Ubuntu / Windows / macOS × Python 3.11 / 3.12 |
 | [v1.1 发布后记录](docs/POST-RELEASE.md) | 固定标签下载、安装与历史 CI |
 | [发布说明](docs/RELEASE-v1.2.0.md) | 本版新增、升级方式与实测边界 |

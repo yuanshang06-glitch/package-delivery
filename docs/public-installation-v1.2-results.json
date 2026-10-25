@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "version": "1.2.0",
+  "tag_commit": "e2577f8512a09f8e38674c6aa8056f13fc750af1",
+  "release_url": "https://github.com/yuanshang06-glitch/package-delivery/releases/tag/v1.2.0",
+  "archive_bytes": 101227,
+  "archive_sha256": "b3dcc562e9c87192611d80e5f2a542ecb8366afacbc624c94207e27954eaa0cf",
+  "downloaded_asset_hash_matches": true,
+  "archive_matches_tagged_source_files": 42,
+  "tag_git_clone_install": {
+    "passed": true,
+    "skill_files": 9
+  },
+  "tag_npx_project_install": {
+    "passed": true,
+    "cli_version": "1.7.4",
+    "skill_files": 9,
+    "scope": "isolated project, no global profile changes"
+  },
+  "upgrade_from_v1_1": {
+    "passed": true,
+    "backup_byte_identical": true,
+    "dry_run_preserves_existing": true
+  },
+  "tag_ci": {
+    "passed": true,
+    "jobs": 6,
+    "url": "https://github.com/yuanshang06-glitch/package-delivery/actions/runs/40198265133"
+  },
+  "not_verified": [
+    "Native client automatic discovery",
+    "Global npx install into real profile",
+    "Minimum Node22.20 runtime",
+    "16GiB aggregate boundary stress",
+    "GB-level deflated stress",
+    "Longitudinal productivity comparison"
+  ]
+}
