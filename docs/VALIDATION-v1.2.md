@@ -34,7 +34,7 @@ skill格式检查通过；1.2.0清单包含9个skill文件，隔离目录dry-run
 
 ## 远端CI
 
-本分支配置Ubuntu/Windows/macOS × Python3.11/3.12六组检查。当前尚待推送后实际执行；矩阵配置不是已通过证据。后续结果另附具体commit和run链接。
+Ubuntu/Windows/macOS × Python3.11/3.12六组检查全部成功，包含大文件组合回归及安装预览。已测源码commit为9a659c7bad99aa4136a752cf0774c0f082bb220e；见[实际Actions运行](https://github.com/yuanshang06-glitch/package-delivery/actions/runs/40181208327)及[机器快照](ci-v1.2-source.json)。远端CI使用小fixture，没有在六个runner上重跑GB压力。后续仅文档记录提交不改变该源码验证结论。开发候选保留在[草稿PR #1](https://github.com/yuanshang06-glitch/package-delivery/pull/1)，尚未合并或发布。
 
 ## 仍有边界
 
