@@ -8,6 +8,8 @@
 
 版本与附件见 [v1.1.0 Release](https://github.com/yuanshang06-glitch/package-delivery/releases/tag/v1.1.0)。环境、已测范围和目前短板见下文及[验证记录](docs/VALIDATION.md)；最新远端检查见 [GitHub Actions](https://github.com/yuanshang06-glitch/package-delivery/actions)。
 
+[发布后验证](docs/POST-RELEASE.md)：固定标签Git/npx安装、公开附件摘要检查通过；三系统×两Python的六组CI成功。原生客户端自动发现等限制仍保留。
+
 ## 快捷安装
 
 ### npx 一条命令

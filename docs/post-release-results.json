@@ -1,0 +1,75 @@
+{
+  "version": "1.1.0",
+  "status": "published-and-verified",
+  "run_id": 40177030693,
+  "run_url": "https://github.com/yuanshang06-glitch/package-delivery/actions/runs/40177030693",
+  "event": "workflow_dispatch",
+  "workflow_commit": "9160be6b3f9b0bb78e2cfd9dbfbbbb7ac77b0574",
+  "tested_ref": "v1.1.0",
+  "tested_commit": "29ae7ebddc3f9496dc69948e448231c40ceafca1",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "test (macos-latest, 3.11)",
+      "conclusion": "success",
+      "url": "https://github.com/yuanshang06-glitch/package-delivery/actions/runs/40177030693/job/121119819730",
+      "checked_out_commit": "29ae7ebddc3f9496dc69948e448231c40ceafca1",
+      "test_suite_counts": [
+        52,
+        31
+      ]
+    },
+    {
+      "name": "test (windows-latest, 3.12)",
+      "conclusion": "success",
+      "url": "https://github.com/yuanshang06-glitch/package-delivery/actions/runs/40177030693/job/121119819780",
+      "checked_out_commit": "29ae7ebddc3f9496dc69948e448231c40ceafca1",
+      "test_suite_counts": [
+        52,
+        31
+      ]
+    },
+    {
+      "name": "test (ubuntu-latest, 3.12)",
+      "conclusion": "success",
+      "url": "https://github.com/yuanshang06-glitch/package-delivery/actions/runs/40177030693/job/121119819820",
+      "checked_out_commit": "29ae7ebddc3f9496dc69948e448231c40ceafca1",
+      "test_suite_counts": [
+        52,
+        31
+      ]
+    },
+    {
+      "name": "test (windows-latest, 3.11)",
+      "conclusion": "success",
+      "url": "https://github.com/yuanshang06-glitch/package-delivery/actions/runs/40177030693/job/121119819836",
+      "checked_out_commit": "29ae7ebddc3f9496dc69948e448231c40ceafca1",
+      "test_suite_counts": [
+        52,
+        31
+      ]
+    },
+    {
+      "name": "test (macos-latest, 3.12)",
+      "conclusion": "success",
+      "url": "https://github.com/yuanshang06-glitch/package-delivery/actions/runs/40177030693/job/121119819871",
+      "checked_out_commit": "29ae7ebddc3f9496dc69948e448231c40ceafca1",
+      "test_suite_counts": [
+        52,
+        31
+      ]
+    },
+    {
+      "name": "test (ubuntu-latest, 3.11)",
+      "conclusion": "success",
+      "url": "https://github.com/yuanshang06-glitch/package-delivery/actions/runs/40177030693/job/121119819881",
+      "checked_out_commit": "29ae7ebddc3f9496dc69948e448231c40ceafca1",
+      "test_suite_counts": [
+        52,
+        31
+      ]
+    }
+  ],
+  "initial_ci_issue": "macOS tempfile used /var alias; current CI harness supplies the canonical runner temporary directory without weakening install ancestor-link rejection.",
+  "release_unchanged": true
+}

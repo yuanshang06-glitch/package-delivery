@@ -1,0 +1,25 @@
+{
+  "version": "1.1.0",
+  "public_repository": "https://github.com/yuanshang06-glitch/package-delivery",
+  "release_url": "https://github.com/yuanshang06-glitch/package-delivery/releases/tag/v1.1.0",
+  "tag_commit": "29ae7ebddc3f9496dc69948e448231c40ceafca1",
+  "archive_sha256": "4dba99fb700476e8231e80dd07490c5725b7f4196731e02f8643e05cffe60160",
+  "archive_bytes": 65936,
+  "downloaded_asset_hash_matches": true,
+  "archive_matches_tagged_source_files": 29,
+  "tag_git_clone_install": {
+    "passed": true,
+    "skill_files": 8
+  },
+  "tag_npx_project_install": {
+    "cli_version": "1.7.4",
+    "passed": true,
+    "skill_files": 8,
+    "scope": "isolated project, not global"
+  },
+  "not_verified": [
+    "Native client automatic skill discovery",
+    "Global npx installation flags against real profile",
+    "Longitudinal productivity gains"
+  ]
+}
