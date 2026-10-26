@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0",
+  "version": "1.3.0",
   "files": [
     {
       "path": "package-delivery/agents/openai.yaml",
@@ -17,9 +17,14 @@
       "sha256": "e3e47872eca8bcf45f51c7b3025b141210a1db4d81d712359b4c7e6e95611326"
     },
     {
+      "path": "package-delivery/references/media-delivery.md",
+      "bytes": 19493,
+      "sha256": "0718a0dd9f55f972e09036675fbf7554193799832d0c1a4f19f423520c0d9139"
+    },
+    {
       "path": "package-delivery/references/task-brief.md",
-      "bytes": 1453,
-      "sha256": "544837342f763f21065127fd23bf64d8fdb2d399c0ffca8194e0b9112410cce9"
+      "bytes": 1713,
+      "sha256": "33df1992aa86d8e6303d5ef99266912c21609fa3cf4901f4facb91d36234fd31"
     },
     {
       "path": "package-delivery/references/traceability.md",
@@ -37,14 +42,19 @@
       "sha256": "da451465d7685226e0ae57895e6334bdb90e44ceccf561683b6a3bb51f065cd6"
     },
     {
+      "path": "package-delivery/scripts/media.py",
+      "bytes": 49636,
+      "sha256": "fb41da7e9bb095c9629779c7c6b45d286203fb28bc1a0e76a946e4c2eb6d28d9"
+    },
+    {
       "path": "package-delivery/SKILL.md",
-      "bytes": 5471,
-      "sha256": "9934c411e316cad20bfef661ae270ec6f97ea77a99f604db99c31cb04e609526"
+      "bytes": 5978,
+      "sha256": "492e57f0d1b1bff6423b5e707d56304aa25510b5590581fed5461781e1139c70"
     },
     {
       "path": "package-delivery/VERSION",
       "bytes": 6,
-      "sha256": "1e5b51cde515396a9fa762909cf8ca6584ccc564b325d2eebeea76175fe95c4d"
+      "sha256": "64d23f858ef51b0f996e4966d4e27c0371b437e2d2787890b1f7ad22d4ec5663"
     }
   ]
 }

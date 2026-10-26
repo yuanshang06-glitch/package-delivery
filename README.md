@@ -1,8 +1,10 @@
 # package-delivery
 
+> v1.3.0 媒体交付开发候选，尚未创建正式 Release。下面固定标签快捷安装仍是 v1.2.0；媒体扩展需使用本分支源目录，见[媒体用法](package-delivery/references/media-delivery.md)。
+
 把任务成果整理成一个接收方能直接接手、可以独立核对的交付包。
 
-`v1.2.0` · Python 3.11+ · 仅标准库 · MIT
+`v1.3.0 开发候选` · Python 3.11+ · 核心标准库 · MIT
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-dark.svg">
@@ -21,7 +23,7 @@
 
 给合作者或 AI Agent 派任务后，交回实际产物、接手说明、验证证据、需求与产物对照表，以及明确列出的未完成项。
 
-本项目是一个本地 Agent Skill，附带两个检查脚本和一个安装器。没有后台服务，不需要 API Key 或额外 Python 依赖；任务本身用什么模型由你决定。它检查交付包的结构、摘要和引用是否一致，**不判断成果质量，也不证明作者身份或日志真实性**。详见[范围与限制](#范围与限制)。
+本项目是一个本地 Agent Skill，附带打包、接手检查、可选媒体检查脚本和一个安装器。没有后台服务，不需要 API Key 或额外 Python 依赖；任务本身用什么模型由你决定。它检查交付包的结构、摘要和引用是否一致，**不判断成果质量，也不证明作者身份或日志真实性**。详见[范围与限制](#范围与限制)。
 
 ## 交回什么
 
@@ -125,12 +127,25 @@ python package-delivery/scripts/check_handoff.py engineering.zip --profile large
 
 表格列出配置上限，已验证的尺寸与环境单独记录。large 模式支持 `deflated` 和 `stored` 两种压缩方式，采用分块读写和 ZIP64。磁盘预算和压缩方式的选择见[大文件交付](package-delivery/references/large-files.md)，实测尺寸与环境见 [v1.2 验证记录](docs/VALIDATION-v1.2.md)。
 
+### 5. 视频与音频成果（开发候选）
+
+在 `DELIVERY.json` 的可选 `media` 字段中声明视频、音频和配套文件。技术检查可记录时长、编码、分辨率、音轨、采样率、声道及源文件 SHA-256，并核对显式期望。
+
+```sh
+python package-delivery/scripts/media.py inspect --root staging --out staging/evidence/media-report.json --profile large
+```
+
+报告只总结技术检查。画质、听感、字幕/转写同步和可编辑工程仍需独立验收；配套文件存在且摘要正确不等于内容合格。没有本地 `ffprobe` 时写 `not_run`，不会自动安装工具。
+
+完整声明、退出码与接手顺序见[媒体交付扩展](package-delivery/references/media-delivery.md)，实际样本与验证边界见[v1.3 验证记录](docs/VALIDATION-v1.3.md)。本版不制作、转码、转写或自动上传媒体。
+
 ## 环境要求
 
 | 用途 | 要求 |
 | --- | --- |
 | 阅读 skill、手动整理文件夹 | 能读取 Markdown 和文件的合作者或 Agent |
-| 打包、校验、安装与测试 | Python 3.11+，全部使用标准库，无需 pip |
+| 打包、完整性校验与安装 | Python 3.11+，核心全部使用标准库，无需 pip |
+| 媒体技术检查（可选） | 本地 ffprobe；缺失明确 not_run，旧版工具兼容范围以实际验证为准 |
 | npx 安装（可选） | Node.js ≥ 22.20、npm/npx、Git、HTTPS 网络 |
 | Git 安装（可选） | Git、Python 3.11+、HTTPS 网络 |
 | 运行实际成果 | 按任务书另行提供依赖、设备或服务 |
@@ -158,6 +173,8 @@ python scripts/install.py --client codex --replace
 - **证据边界**：容量上限、实际压力测试与长期可靠性分别报告；目前没有足够日常任务对照来量化生产力收益。
 
 ## 验证状态
+
+下列凭条概括已发布 v1.2.0 的历史检查；v1.3 媒体新增检查单独见[本版验证](docs/VALIDATION-v1.3.md)，不能把历史压力数据当作媒体扩展重跑。
 
 <p align="center">
   <a href="docs/VALIDATION-v1.2.md">

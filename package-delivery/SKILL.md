@@ -1,11 +1,13 @@
 ---
 name: package-delivery
-description: "把已执行任务的实际成果整理成可直接接手的交付包，包含产物、接手说明、实际验证、未完成项与可核对ZIP清单。用于合作者任务交付、外包回传、Agent完工打包；普通进度汇报不必启用。"
+description: "把已执行任务的实际成果整理成可接手的交付包，包含产物、接手说明、验证证据、未完成项与可核对ZIP清单。用于合作者、外包或Agent完工交付，也适用于音视频成果和配套文件交付；普通进度汇报不必启用。"
 ---
 
 # 成果完整交付
 
-版本：1.2.0。数据格式沿用collaborator-delivery/1及collaborator-traceability/1；需要GB级工程/资料交付时读[大文件交付](references/large-files.md)。
+版本：1.3.0（开发候选）。数据格式沿用collaborator-delivery/1及collaborator-traceability/1；需要GB级工程/资料交付时读[大文件交付](references/large-files.md)。
+
+音视频成果交付时读[媒体交付扩展](references/media-delivery.md)：声明主视频/音频及字幕、转写、源文件等配套内容，使用可选本地ffprobe生成技术检查报告。缺工具或信息未知明确not_run；基础ZIP检查不判断媒体可播放性、画质、听感或字幕同步。接收方在解压目录独立复核；任务书要求的必需检查未运行或失败时，将交付标为partial/blocked并列缺口。
 
 让收件人只拿到这个包，就知道交付了什么、如何使用、哪些验证做过、还缺什么及下一步由谁处理。打包只覆盖已授权任务，不附带上传、发消息、部署或修改其他项目的权限。
 
