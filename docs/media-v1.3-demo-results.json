@@ -1,0 +1,72 @@
+{
+  "scope": "Independent acceptance of synthetic technical delivery demonstration, not subjective media quality",
+  "accepted": true,
+  "os": "Windows",
+  "python": "3.11.9",
+  "packages": [
+    {
+      "kind": "video",
+      "profile": "large",
+      "technical_status": "passed",
+      "media_assets": 1,
+      "archive": "video-delivery.zip",
+      "archive_bytes": 294044,
+      "archive_sha256": "e158d42eb53def55469fab817b13bf7d44b27d108ab62579f79cc4c97df0f427",
+      "handoff_verified": true,
+      "fresh_receiver_media_verified": true,
+      "manual_checks": [
+        {
+          "name": "visual_quality",
+          "status": "not_run"
+        },
+        {
+          "name": "audio_quality",
+          "status": "not_run"
+        },
+        {
+          "name": "subtitle_or_transcript_sync",
+          "status": "not_run"
+        },
+        {
+          "name": "editable_project_integrity",
+          "status": "not_run"
+        }
+      ]
+    },
+    {
+      "kind": "audio",
+      "profile": "standard",
+      "technical_status": "passed",
+      "media_assets": 2,
+      "archive": "audio-delivery.zip",
+      "archive_bytes": 251365,
+      "archive_sha256": "227037ab71b6739b40cd397496dbaa72592ae67e422dc8e3a31a51b2a02cf39d",
+      "handoff_verified": true,
+      "fresh_receiver_media_verified": true,
+      "manual_checks": [
+        {
+          "name": "visual_quality",
+          "status": "not_run"
+        },
+        {
+          "name": "audio_quality",
+          "status": "not_run"
+        },
+        {
+          "name": "subtitle_or_transcript_sync",
+          "status": "not_run"
+        },
+        {
+          "name": "editable_project_integrity",
+          "status": "not_run"
+        }
+      ]
+    }
+  ],
+  "not_verified": [
+    "Human viewing/listening and subtitle sync",
+    "Editable project import",
+    "Real user media workflows",
+    "GB media subprocess performance"
+  ]
+}

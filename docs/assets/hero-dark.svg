@@ -9,7 +9,7 @@
   <text x="72" y="414" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="58" font-weight="700" fill="#EAF2FA">成果齐备</text>
   <text x="72" y="480" font-family="'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif" font-size="58" font-weight="700" fill="#EAF2FA">接手有据</text>
   <rect x="72" y="518" width="430" height="1" fill="#EAF2FA" opacity="0.2"/>
-  <text x="72" y="556" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">v1.2.0 · Python 3.11+ · stdlib · MIT</text>
+  <text x="72" y="556" font-family="Consolas,'SFMono-Regular',monospace" font-size="24" fill="#EAF2FA">Python 3.11+ · MIT</text>
   <rect x="612" y="116" width="1" height="404" fill="#EAF2FA" opacity="0.16"/>
   <g transform="rotate(-4 966 346)">
     <rect x="820" y="118" width="280" height="302" rx="2" fill="#EAF2FA" fill-opacity="0.12" stroke="#EAF2FA" stroke-opacity="0.3" stroke-width="1.5"/>

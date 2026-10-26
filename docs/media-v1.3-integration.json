@@ -1,0 +1,670 @@
+{
+  "passed": true,
+  "source_sha256": "fb41da7e9bb095c9629779c7c6b45d286203fb28bc1a0e76a946e4c2eb6d28d9",
+  "cases": [
+    {
+      "name": "real AV and declared subtitle",
+      "passed": true,
+      "expected": [
+        "passed"
+      ],
+      "observed": {
+        "technical_status": "passed",
+        "assets": [
+          {
+            "path": "演示 视频.mp4",
+            "kind": "video",
+            "bytes": 144356,
+            "sha256": "dbd95ed569afefbb0a620f293087a7efc07ab00956dfc6f91f1c19ad4fffebbe",
+            "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+            "duration_seconds": 3.0,
+            "streams": [
+              {
+                "index": 0,
+                "codec_type": "video",
+                "codec_name": "h264",
+                "width": 320,
+                "height": 180,
+                "sample_rate": null,
+                "channels": null,
+                "duration": 3.0,
+                "attached_pic": false
+              },
+              {
+                "index": 1,
+                "codec_type": "audio",
+                "codec_name": "aac",
+                "width": null,
+                "height": null,
+                "sample_rate": 48000,
+                "channels": 1,
+                "duration": 3.0,
+                "attached_pic": false
+              }
+            ],
+            "checks": [
+              {
+                "name": "file",
+                "status": "passed"
+              },
+              {
+                "name": "companions",
+                "status": "passed"
+              },
+              {
+                "name": "source_unchanged",
+                "status": "passed"
+              },
+              {
+                "name": "probe",
+                "status": "passed"
+              },
+              {
+                "name": "streams",
+                "status": "passed"
+              },
+              {
+                "name": "audio_required",
+                "status": "passed"
+              },
+              {
+                "name": "duration",
+                "status": "passed"
+              },
+              {
+                "name": "expected:width",
+                "status": "passed",
+                "expected": 320,
+                "actual": 320
+              },
+              {
+                "name": "expected:height",
+                "status": "passed",
+                "expected": 180,
+                "actual": 180
+              },
+              {
+                "name": "expected:min_duration_seconds",
+                "status": "passed",
+                "expected": 2.5,
+                "actual": 3.0
+              },
+              {
+                "name": "expected:max_duration_seconds",
+                "status": "passed",
+                "expected": 3.5,
+                "actual": 3.0
+              }
+            ],
+            "companions": [
+              {
+                "path": "captions.srt",
+                "role": "subtitle",
+                "bytes": 68,
+                "sha256": "bbcef015afc19bd7b5e0acadeebfcb9500041e4dc34ff5028c73b9a144beba51",
+                "status": "passed"
+              }
+            ],
+            "technical_status": "passed"
+          }
+        ],
+        "tool": {
+          "name": "ffprobe",
+          "available": true,
+          "version": "ffprobe version 8.1.2-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers"
+        }
+      }
+    },
+    {
+      "name": "real PCM WAV",
+      "passed": true,
+      "expected": [
+        "passed"
+      ],
+      "observed": {
+        "technical_status": "passed",
+        "assets": [
+          {
+            "path": "音频.wav",
+            "kind": "audio",
+            "bytes": 96044,
+            "sha256": "d7599881a3e28eb9578349a5a17e1ef8553c7be5d4d5521ff452cec6387cdd3b",
+            "format_name": "wav",
+            "duration_seconds": 3.0,
+            "streams": [
+              {
+                "index": 0,
+                "codec_type": "audio",
+                "codec_name": "pcm_s16le",
+                "width": null,
+                "height": null,
+                "sample_rate": 16000,
+                "channels": 1,
+                "duration": 3.0,
+                "attached_pic": false
+              }
+            ],
+            "checks": [
+              {
+                "name": "file",
+                "status": "passed"
+              },
+              {
+                "name": "source_unchanged",
+                "status": "passed"
+              },
+              {
+                "name": "probe",
+                "status": "passed"
+              },
+              {
+                "name": "streams",
+                "status": "passed"
+              },
+              {
+                "name": "duration",
+                "status": "passed"
+              },
+              {
+                "name": "expected:sample_rate",
+                "status": "passed",
+                "expected": 16000,
+                "actual": 16000
+              },
+              {
+                "name": "expected:channels",
+                "status": "passed",
+                "expected": 1,
+                "actual": 1
+              },
+              {
+                "name": "expected:min_duration_seconds",
+                "status": "passed",
+                "expected": 2.9,
+                "actual": 3.0
+              },
+              {
+                "name": "expected:max_duration_seconds",
+                "status": "passed",
+                "expected": 3.1,
+                "actual": 3.0
+              }
+            ],
+            "companions": [],
+            "technical_status": "passed"
+          }
+        ],
+        "tool": {
+          "name": "ffprobe",
+          "available": true,
+          "version": "ffprobe version 8.1.2-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers"
+        }
+      }
+    },
+    {
+      "name": "real MP3",
+      "passed": true,
+      "expected": [
+        "passed"
+      ],
+      "observed": {
+        "technical_status": "passed",
+        "assets": [
+          {
+            "path": "voice.mp3",
+            "kind": "audio",
+            "bytes": 4293,
+            "sha256": "73d8c8706e00ac8c81c861ed7c9daea749d0377af14c89772db454a7e2ff584c",
+            "format_name": "mp3",
+            "duration_seconds": 3.0,
+            "streams": [
+              {
+                "index": 0,
+                "codec_type": "audio",
+                "codec_name": "mp3",
+                "width": null,
+                "height": null,
+                "sample_rate": 16000,
+                "channels": 1,
+                "duration": 3.0,
+                "attached_pic": false
+              }
+            ],
+            "checks": [
+              {
+                "name": "file",
+                "status": "passed"
+              },
+              {
+                "name": "source_unchanged",
+                "status": "passed"
+              },
+              {
+                "name": "probe",
+                "status": "passed"
+              },
+              {
+                "name": "streams",
+                "status": "passed"
+              },
+              {
+                "name": "duration",
+                "status": "passed"
+              },
+              {
+                "name": "expected:sample_rate",
+                "status": "passed",
+                "expected": 16000,
+                "actual": 16000
+              },
+              {
+                "name": "expected:channels",
+                "status": "passed",
+                "expected": 1,
+                "actual": 1
+              }
+            ],
+            "companions": [],
+            "technical_status": "passed"
+          }
+        ],
+        "tool": {
+          "name": "ffprobe",
+          "available": true,
+          "version": "ffprobe version 8.1.2-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers"
+        }
+      }
+    },
+    {
+      "name": "required audio missing",
+      "passed": true,
+      "expected": [
+        "failed"
+      ],
+      "observed": {
+        "technical_status": "failed",
+        "assets": [
+          {
+            "path": "silent.mp4",
+            "kind": "video",
+            "bytes": 25318,
+            "sha256": "7d6cbdadf1a19195413bf7d8ed5e5f23f33355338655ed354c36a52a5aa1fa17",
+            "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+            "duration_seconds": 2.0,
+            "streams": [
+              {
+                "index": 0,
+                "codec_type": "video",
+                "codec_name": "h264",
+                "width": 160,
+                "height": 90,
+                "sample_rate": null,
+                "channels": null,
+                "duration": 2.0,
+                "attached_pic": false
+              }
+            ],
+            "checks": [
+              {
+                "name": "file",
+                "status": "passed"
+              },
+              {
+                "name": "source_unchanged",
+                "status": "passed"
+              },
+              {
+                "name": "probe",
+                "status": "passed"
+              },
+              {
+                "name": "streams",
+                "status": "passed"
+              },
+              {
+                "name": "audio_required",
+                "status": "failed",
+                "code": "AUDIO_REQUIRED_MISSING"
+              },
+              {
+                "name": "duration",
+                "status": "passed"
+              }
+            ],
+            "companions": [],
+            "technical_status": "failed"
+          }
+        ],
+        "tool": {
+          "name": "ffprobe",
+          "available": true,
+          "version": "ffprobe version 8.1.2-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers"
+        }
+      }
+    },
+    {
+      "name": "intentional silent video",
+      "passed": true,
+      "expected": [
+        "passed"
+      ],
+      "observed": {
+        "technical_status": "passed",
+        "assets": [
+          {
+            "path": "silent.mp4",
+            "kind": "video",
+            "bytes": 25318,
+            "sha256": "7d6cbdadf1a19195413bf7d8ed5e5f23f33355338655ed354c36a52a5aa1fa17",
+            "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+            "duration_seconds": 2.0,
+            "streams": [
+              {
+                "index": 0,
+                "codec_type": "video",
+                "codec_name": "h264",
+                "width": 160,
+                "height": 90,
+                "sample_rate": null,
+                "channels": null,
+                "duration": 2.0,
+                "attached_pic": false
+              }
+            ],
+            "checks": [
+              {
+                "name": "file",
+                "status": "passed"
+              },
+              {
+                "name": "source_unchanged",
+                "status": "passed"
+              },
+              {
+                "name": "probe",
+                "status": "passed"
+              },
+              {
+                "name": "streams",
+                "status": "passed"
+              },
+              {
+                "name": "duration",
+                "status": "passed"
+              }
+            ],
+            "companions": [],
+            "technical_status": "passed"
+          }
+        ],
+        "tool": {
+          "name": "ffprobe",
+          "available": true,
+          "version": "ffprobe version 8.1.2-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers"
+        }
+      }
+    },
+    {
+      "name": "wrong dimensions",
+      "passed": true,
+      "expected": [
+        "failed"
+      ],
+      "observed": {
+        "technical_status": "failed",
+        "assets": [
+          {
+            "path": "演示 视频.mp4",
+            "kind": "video",
+            "bytes": 144356,
+            "sha256": "dbd95ed569afefbb0a620f293087a7efc07ab00956dfc6f91f1c19ad4fffebbe",
+            "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+            "duration_seconds": 3.0,
+            "streams": [
+              {
+                "index": 0,
+                "codec_type": "video",
+                "codec_name": "h264",
+                "width": 320,
+                "height": 180,
+                "sample_rate": null,
+                "channels": null,
+                "duration": 3.0,
+                "attached_pic": false
+              },
+              {
+                "index": 1,
+                "codec_type": "audio",
+                "codec_name": "aac",
+                "width": null,
+                "height": null,
+                "sample_rate": 48000,
+                "channels": 1,
+                "duration": 3.0,
+                "attached_pic": false
+              }
+            ],
+            "checks": [
+              {
+                "name": "file",
+                "status": "passed"
+              },
+              {
+                "name": "source_unchanged",
+                "status": "passed"
+              },
+              {
+                "name": "probe",
+                "status": "passed"
+              },
+              {
+                "name": "streams",
+                "status": "passed"
+              },
+              {
+                "name": "duration",
+                "status": "passed"
+              },
+              {
+                "name": "expected:width",
+                "status": "failed",
+                "code": "EXPECTED_MISMATCH",
+                "expected": 1920,
+                "actual": 320
+              }
+            ],
+            "companions": [],
+            "technical_status": "failed"
+          }
+        ],
+        "tool": {
+          "name": "ffprobe",
+          "available": true,
+          "version": "ffprobe version 8.1.2-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers"
+        }
+      }
+    },
+    {
+      "name": "corrupt input",
+      "passed": true,
+      "expected": [
+        "failed"
+      ],
+      "observed": {
+        "technical_status": "failed",
+        "assets": [
+          {
+            "path": "corrupt.mp4",
+            "kind": "video",
+            "bytes": 17,
+            "sha256": "33de11461209028bc4f440a03b107b7fcb096209b44005450082e749cee8504b",
+            "format_name": null,
+            "duration_seconds": null,
+            "streams": [],
+            "checks": [
+              {
+                "name": "file",
+                "status": "passed"
+              },
+              {
+                "name": "source_unchanged",
+                "status": "passed"
+              },
+              {
+                "name": "probe",
+                "status": "failed",
+                "code": "PROBE_FAILED"
+              },
+              {
+                "name": "streams",
+                "status": "not_run",
+                "code": "PROBE_FAILED"
+              },
+              {
+                "name": "duration",
+                "status": "not_run",
+                "code": "DURATION_UNKNOWN"
+              }
+            ],
+            "companions": [],
+            "technical_status": "failed"
+          }
+        ],
+        "tool": {
+          "name": "ffprobe",
+          "available": true,
+          "version": "ffprobe version 8.1.2-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers"
+        }
+      }
+    },
+    {
+      "name": "tool missing is not pass",
+      "passed": true,
+      "expected": [
+        "not_run"
+      ],
+      "observed": {
+        "technical_status": "not_run",
+        "assets": [
+          {
+            "path": "音频.wav",
+            "kind": "audio",
+            "bytes": 96044,
+            "sha256": "d7599881a3e28eb9578349a5a17e1ef8553c7be5d4d5521ff452cec6387cdd3b",
+            "format_name": null,
+            "duration_seconds": null,
+            "streams": [],
+            "checks": [
+              {
+                "name": "file",
+                "status": "passed"
+              },
+              {
+                "name": "probe",
+                "status": "not_run",
+                "code": "TOOL_MISSING",
+                "reason": "ffprobe is not available"
+              },
+              {
+                "name": "streams",
+                "status": "not_run",
+                "code": "TOOL_MISSING"
+              },
+              {
+                "name": "duration",
+                "status": "not_run",
+                "code": "DURATION_UNKNOWN"
+              }
+            ],
+            "companions": [],
+            "technical_status": "not_run"
+          }
+        ],
+        "tool": {
+          "name": "ffprobe",
+          "available": false,
+          "version": null
+        }
+      }
+    },
+    {
+      "name": "zero duration cannot pass timed media",
+      "passed": true,
+      "expected": [
+        "failed",
+        "not_run"
+      ],
+      "observed": {
+        "technical_status": "not_run",
+        "assets": [
+          {
+            "path": "音频.wav",
+            "kind": "audio",
+            "bytes": 96044,
+            "sha256": "d7599881a3e28eb9578349a5a17e1ef8553c7be5d4d5521ff452cec6387cdd3b",
+            "format_name": "wav",
+            "duration_seconds": null,
+            "streams": [
+              {
+                "index": 0,
+                "codec_type": "audio",
+                "codec_name": "pcm_s16le",
+                "width": null,
+                "height": null,
+                "sample_rate": 16000,
+                "channels": 1,
+                "duration": null,
+                "attached_pic": false
+              }
+            ],
+            "checks": [
+              {
+                "name": "file",
+                "status": "passed"
+              },
+              {
+                "name": "source_unchanged",
+                "status": "passed"
+              },
+              {
+                "name": "probe",
+                "status": "passed"
+              },
+              {
+                "name": "streams",
+                "status": "passed"
+              },
+              {
+                "name": "duration",
+                "status": "not_run",
+                "code": "DURATION_UNKNOWN"
+              }
+            ],
+            "companions": [],
+            "technical_status": "not_run"
+          }
+        ],
+        "tool": {
+          "name": "ffprobe",
+          "available": true,
+          "version": "ffprobe version 8.1.2-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers"
+        }
+      }
+    },
+    {
+      "name": "unrepresentable numeric field has fixed failure code",
+      "passed": true,
+      "observed": "PROBE_OUTPUT_INVALID"
+    },
+    {
+      "name": "automatic discovery never runs a packaged ffprobe lookalike",
+      "passed": true,
+      "observed": {
+        "process_calls": 0,
+        "technical_status": "not_run"
+      },
+      "fixture": "mocked runner, no executable payload launched"
+    }
+  ],
+  "fixture": "local synthetic media, not user recordings"
+}
